@@ -20,7 +20,7 @@ var api = new ParseServer({
   push: {
       ios: 
       {
-          pfx: process.env.PFX,
+          pfx: process.env.CERTIFICATE,
           bundleId: process.env.BUNDLE_ID,
           production: true
       }
