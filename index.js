@@ -20,7 +20,7 @@ var api = new ParseServer({
  push: {
         ios: {
             pfx: __dirname + '/Certificates.p12',
-            bundleId: process.nav.BUNDLE_ID, // The bundle identifier associated with your app
+            bundleId: process.env.BUNDLE_ID, // The bundle identifier associated with your app
           production: true, // Specifies which environment to connect to: Production (if true) or Sandbox
         }
     },
