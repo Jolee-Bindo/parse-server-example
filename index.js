@@ -21,7 +21,7 @@ var api = new ParseServer({
         ios: {
             pfx: process.env.PFX_URL,
             bundleId: process.env.BUNDLE_ID, // The bundle identifier associated with your app
-          production: false, // Specifies which environment to connect to: Production (if true) or Sandbox
+          production: true, // Specifies which environment to connect to: Production (if true) or Sandbox
         }
     },
   liveQuery: {
