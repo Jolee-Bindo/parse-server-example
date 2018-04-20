@@ -18,18 +18,12 @@ var api = new ParseServer({
   masterKey: process.env.MASTER_KEY || '', //Add your master key here. Keep it secret!
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',  // Don't forget to change to https if needed
   push: {
-      ios: [
-      {
-          pfx: process.env.PFX_URL,
-          bundleId: process.env.BUNDLE_ID,
-          production: false
-      },
+      ios: 
       {
           pfx: process.env.PFX,
           bundleId: process.env.BUNDLE_ID,
           production: true
       }
-    ]
 },
   liveQuery: {
     classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
