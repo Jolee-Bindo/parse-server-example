@@ -20,8 +20,8 @@ var api = new ParseServer({
  push: {
         ios: {
             pfx: __dirname + '/Certificates.p12',
-            bundleId: 'com.technologyempiresystems.ireserve',//process.env.BUNDLE_ID, // The bundle identifier associated with your app
-          production: false, // Specifies which environment to connect to: Production (if true) or Sandbox
+            bundleId: process.env.BUNDLE_ID, // The bundle identifier associated with your app
+          production: true, // Specifies which environment to connect to: Production (if true) or Sandbox
         }
     },
   liveQuery: {
