@@ -25,7 +25,7 @@ var api = new ParseServer({
           production: false
       },
       {
-          pfx: process.env.PFX_URL,
+          pfx: process.env.PFX,
           bundleId: process.env.BUNDLE_ID,
           production: true
       }
