@@ -3,7 +3,7 @@ Parse.Cloud.define('hello', function(req, res) {
   res.success('Hi');
 });
 
-Parse.Cloud.define("sendPushNotification", function(request, response) {
+Parse.Cloud.define('sendPushNotification', function(request, response) {
         var userId = request.params.userId;
         var message = request.params.message;
         var queryUser = new Parse.Query(Parse.User);
