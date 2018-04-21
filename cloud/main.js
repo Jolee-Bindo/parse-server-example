@@ -27,7 +27,7 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
           },
           error: function(error) {
             console.log('##### PUSH ERROR');
-            response.error('ERROR');
+            response.error(error.message);
           }
         });
 });
