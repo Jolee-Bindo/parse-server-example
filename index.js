@@ -67,7 +67,6 @@ httpServer.listen(port, function() {
 });
 
 // This will enable the Live Query real-time server
-app.use(PARSE_MOUNT_ON_LIVEQUERY, api);
 
 var PORT_ON_LIVEQUERY = process.env.PORT || 1338;
 var httpServer = require('http').createServer(app);
