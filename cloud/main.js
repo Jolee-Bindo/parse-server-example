@@ -8,11 +8,9 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
         var message = request.params.message;
         var queryUser = new Parse.Query(Parse.User);
         queryUser.equalTo('objectId', userId);
-          console.log(queryUser);
-
+  
         var query = new Parse.Query(Parse.Installation);
         query.matchesQuery('user', queryUser);
-          console.log(query);
 
         Parse.Push.send({
           where: query,
