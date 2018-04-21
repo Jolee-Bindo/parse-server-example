@@ -32,7 +32,8 @@ var api = new ParseServer({
   ]
 },
   liveQuery: {
-    classNames: ['BookingTicket', 'BookingDay'] // List of classes to support for query subscriptions
+    classNames: ['BookingTicket', 'BookingDay'], // List of classes to support for query subscriptions
+    redisURL: process.env.REDIS_URL
   }
 });
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
@@ -66,4 +67,6 @@ httpServer.listen(port, function() {
 });
 
 // This will enable the Live Query real-time server
-ParseServer.createLiveQueryServer(httpServer);
+ParseServer.createLiveQueryServer(httpServer, {
+  redisURL: process.env.REDIS_URL // Redis URL from Mani app
+});
