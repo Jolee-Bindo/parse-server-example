@@ -16,7 +16,7 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
           where: query,
           data: {
             alert: message,
-            badge: 0,
+            badge: 1,
             sound: 'default'
           }
         }, {
