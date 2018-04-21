@@ -70,7 +70,7 @@ httpServer.listen(port, function() {
 
 var PORT_ON_LIVEQUERY = process.env.PORT || 1338;
 var httpServer = require('http').createServer(app);
-httpServer.listen(PORT_ON_LIVEQUERY, function() {
+httpServer.listen(port, function() {
       console.log('livequery server running on port ' + port + '.');
 });
 ParseServer.createLiveQueryServer(httpServer, {
