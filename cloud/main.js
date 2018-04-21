@@ -19,7 +19,7 @@ Parse.Cloud.define("sendPushNotification", function(request, response) {
             sound: 'default'
           }
         }, {
-          useMasterKey: true
+          useMasterKey: true,
           success: function() {
             console.log('##### PUSH OK');
             response.success();
