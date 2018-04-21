@@ -67,12 +67,6 @@ httpServer.listen(port, function() {
 });
 
 // This will enable the Live Query real-time server
-
-var PORT_ON_LIVEQUERY = process.env.PORT || 1338;
-var httpServer = require('http').createServer(app);
-httpServer.listen(port, function() {
-      console.log('livequery server running on port ' + port + '.');
-});
 ParseServer.createLiveQueryServer(httpServer, {
   redisURL: process.env.REDIS_URL // Redis URL from Mani app
 });
