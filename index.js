@@ -32,7 +32,7 @@ var api = new ParseServer({
   ]
 },
   liveQuery: {
-    classNames: ['BookingTicket', 'BookingDay'], // List of classes to support for query subscriptions
+    classNames: ['BookingTicket', 'BookingDay', 'BookingEvent'], // List of classes to support for query subscriptions
     redisURL: process.env.REDIS_URL
   }
 });
