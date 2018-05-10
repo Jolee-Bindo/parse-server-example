@@ -43,6 +43,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
   query.first({
     success: function(object) {
       // Successfully retrieved the object.
+      console.log('bookingDay found with ID:', object.objectId);
       var bookingDay = object;
       var bookingTickets = bookingDay.get("bookingTickets");
       for (var i = 0; i < bookingTickets.length; i++) {
@@ -71,6 +72,8 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
           cancelledBooking.save(null, {
             success: function(cancelledBooking) {
               alert('New object created with objectId: ' + cancelledBooking.id);
+              console.log('cancelledBooking created with ID:', cancelledBooking.get('objectId'));
+
               var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
               bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
               var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
@@ -84,6 +87,8 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
               eventQuery.first({
                 success: function(object) {
                   // Successfully retrieved the object.
+                  console.log('booking event foundwith ID:', object.get('objectId'));
+
                   var bookingEvent = object;
                   var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
                   bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
@@ -113,7 +118,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
           });
         }
       //  alert(object.id + ' - ' + cancelledBooking.get('objectId'));
-        response.success(object);
+        response.success('successfully deactivated:', object.get('objectId'));
 
       }
     },
