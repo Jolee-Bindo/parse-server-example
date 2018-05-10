@@ -95,7 +95,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
                   bookingEvent.save();
                 },
                 error: function(error) {
-                  alert("Error: " + error.code + " " + error.message);
+                  alert("Booking Event Error: " + error.code + " " + error.message);
                 }
               });
               
@@ -110,7 +110,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
             }
           });
         }
-        alert(object.id + ' - ' + object.get('playerName'));
+        alert(object.id + ' - ' + cancelledBooking.get('objectId'));
       }
     },
     error: function(error) {
