@@ -54,7 +54,8 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
         var bookingTicketID = bookingTicket.get("objectId");
         console.log('bookingTicket:', bookingTicket);
         var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
-        if (bookingTicketStatus == 'bookingTicketStatusBookedByBusiness' || bookingTicketStatus == 'bookingTicketStatusBookedByClient') {
+        console.log('bookingTicketStatus:', bookingTicketStatus);
+        if (bookingTicketStatus == "bookingTicketStatusBookedByBusiness" || bookingTicketStatus == "bookingTicketStatusBookedByClient") {
           var CancelledBooking = Parse.Object.extend("CancelledBooking");
           var cancelledBooking = new CancelledBooking();
           
