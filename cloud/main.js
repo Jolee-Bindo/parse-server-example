@@ -46,6 +46,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
       console.log('bookingDay found with ID:', object.get('objectId'));
       var bookingDay = object;
       var bookingTickets = bookingDay.get("bookingTickets");
+      console.log('Booking Tickets:', bookingTickets);
       for (var i = 0; i < bookingTickets.length; i++) {
         var bookingTicket = bookingTickets[i];
         console.log('bookingTicket with id:', bookingTicket.get('objectId'));
