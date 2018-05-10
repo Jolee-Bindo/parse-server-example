@@ -44,16 +44,16 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
     success: function(object) {
       // Successfully retrieved the object.
       var bookingDay = object;
-      var bookingDayID = bookingDay.get('objectId');
+      var bookingDayID = bookingDay.get("objectId");
       console.log('bookingDay found with ID:', bookingDayID);
 
       var bookingTickets = bookingDay.get("bookingTickets");
       console.log('Booking Tickets length:', bookingTickets.length);
       for (var i = 0; i < bookingTickets.length; i++) {
         var bookingTicket = bookingTickets[i];
-        var bookingTicketID = bookingTicket.get('objectId');
+        var bookingTicketID = bookingTicket.get("objectId");
         console.log('bookingTicket with id:', bookingTicketID);
-        var bookingTicketStatus = bookingTicket.get('bookingTicketStatus');
+        var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
         if (bookingTicketStatus == 'bookingTicketStatusBookedByBusiness' || bookingTicketStatus == 'bookingTicketStatusBookedByClient') {
           var CancelledBooking = Parse.Object.extend("CancelledBooking");
           var cancelledBooking = new CancelledBooking();
