@@ -95,7 +95,9 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
                   bookingEvent.save();
                 },
                 error: function(error) {
-                  alert("Booking Event Error: " + error.code + " " + error.message);
+                //  alert("Booking Event Error: " + error.code + " " + error.message);
+                        response.error("Booking Event Error");
+
                 }
               });
               
@@ -110,11 +112,14 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
             }
           });
         }
-        alert(object.id + ' - ' + cancelledBooking.get('objectId'));
+      //  alert(object.id + ' - ' + cancelledBooking.get('objectId'));
+        response.success(object);
+
       }
     },
     error: function(error) {
       alert("Error: " + error.code + " " + error.message);
+      response.error("Error here...");
     }
   });
 });
