@@ -77,7 +77,6 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
           
           cancelledBooking.save(null, {
             success: function(cancelledBooking) {
-              alert('New object created with objectId: ' + cancelledBooking.id);
               console.log('cancelledBooking created with ID:', cancelledBooking.get('objectId'));
 
               var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
@@ -102,7 +101,6 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
                   bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
                   var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
                   bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
-                  bookingEvent.set("bookingEventStatus", 'bookingEventStatusNotActive');
                   bookingEvent.save();
                 },
                 error: function(error) {
@@ -112,9 +110,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
                 }
               });
               
-              bookingTicket.set("bookingTicketStatus", 'bookingTicketStatusCancelledByBusiness');
-              bookingTicket.set("bookingEventStatus", 'bookingEventStatusNotActive');
-              bookingTicket.save();
+              bookingTicket.set("bookingTicketStatus", "bookingTicketStatusCancelledByBusiness");
             },
             error: function(cancelledBooking, error) {
               // Execute any logic that should take place if the save fails.
@@ -124,9 +120,11 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
           });
         }
       //  alert(object.id + ' - ' + cancelledBooking.get('objectId'));
-        response.success('successfully deactivated:', object.get('objectId'));
-
       }
+      bookingTicket.set("bookingEventStatus", 'bookingEventStatusNotActive');
+      bookingTicket.save();
+      response.success('successfully deactivated:', object.get('objectId'));
+
     },
     error: function(error) {
       alert("Error: " + error.code + " " + error.message);
