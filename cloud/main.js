@@ -34,7 +34,7 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
 
 Parse.Cloud.define('deactivateEvent', function(request, response) {
   var bookingDayId = request.params.bookingDayId;
-  var bookingEvent = request.params.bookingEvent;
+  var bookingEventId = request.params.bookingEventId;
   var query = new Parse.Query(Parse.BookingDay);
   query.equalTo('objectId', bookingDayId);
   query.include('bookingTickets');
@@ -76,14 +76,25 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
               bookingDay.set("bookingEventStatus", 'bookingEventStatusNotActive');
               bookingDay.save();
               
-              var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
-              bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
-              var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
-              bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
-              var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
-              bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
-              bookingEvent.set("bookingEventStatus", 'bookingEventStatusNotActive');
-              bookingEvent.save();
+              var eventQuery = new Parse.Query(Parse.BookingEvent);
+              eventQuery.equalTo('objectId', bookingEventId);
+              eventQuery.first({
+                success: function(object) {
+                  // Successfully retrieved the object.
+                  var bookingEvent = object;
+                  var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
+                  bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
+                  var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
+                  bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
+                  var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
+                  bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
+                  bookingEvent.set("bookingEventStatus", 'bookingEventStatusNotActive');
+                  bookingEvent.save();
+                },
+                error: function(error) {
+                  alert("Error: " + error.code + " " + error.message);
+                }
+              });
               
               bookingTicket.set("bookingTicketStatus", 'bookingTicketStatusCancelledByBusiness');
               bookingTicket.set("bookingEventStatus", 'bookingEventStatusNotActive');
