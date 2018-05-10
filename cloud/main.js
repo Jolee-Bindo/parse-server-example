@@ -54,7 +54,8 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
         cancelledBooking.set("cancelledBookingTicket", bookingTicket);
         var business = bookingTicket.get('business');
         cancelledBooking.set("cancelledBookingBusiness", business);
-        [cancelBookingInfo setObject:[NSDate date] forKey:kCancellationDate];
+        var now = new Date();
+        cancelledBooking.set("cancellationDate", now);
 
         var bookingTicketClientStatus = bookingTicket.get('bookingTicketClientStatus');
         if (bookingTicketClientStatus == 'bookingTicketClientStatusRegistered') {
