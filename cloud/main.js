@@ -35,7 +35,9 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
 Parse.Cloud.define('deactivateEvent', function(request, response) {
   var bookingDayId = request.params.bookingDayId;
   var bookingEventId = request.params.bookingEventId;
-  var query = new Parse.Query(Parse.BookingDay);
+  
+  var BookingDay = Parse.Object.extend("BookingDay");
+  var query = new Parse.Query(BookingDay);
   query.equalTo('objectId', bookingDayId);
   query.include('bookingTickets');
   query.first({
@@ -75,8 +77,9 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
               bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
               bookingDay.set("bookingEventStatus", 'bookingEventStatusNotActive');
               bookingDay.save();
-              
-              var eventQuery = new Parse.Query(Parse.BookingEvent);
+             
+              var BookingEvent = Parse.Object.extend("BookingEvent");
+              var query = new Parse.Query(BookingEvent);
               eventQuery.equalTo('objectId', bookingEventId);
               eventQuery.first({
                 success: function(object) {
