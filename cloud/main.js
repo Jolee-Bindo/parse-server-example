@@ -43,7 +43,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
   query.first({
     success: function(object) {
       // Successfully retrieved the object.
-      console.log('bookingDay found with ID:', object.objectId);
+      console.log('bookingDay found with ID:', object.get('objectId'));
       var bookingDay = object;
       var bookingTickets = bookingDay.get("bookingTickets");
       for (var i = 0; i < bookingTickets.length; i++) {
