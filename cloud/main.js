@@ -39,67 +39,68 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
   query.equalTo('objectId', bookingDayId);
   query.include('bookingTickets');
   query.first({
-  success: function(object) {
-    // Successfully retrieved the object.
-    var bookingDay = object;
-    var bookingTickets = bookingDay.get("bookingTickets");
-    for (var i = 0; i < bookingTickets.length; i++) {
-      var bookingTicket = bookingTickets[i];
-      var bookingTicketStatus = bookingTicket.get('bookingTicketStatus');
-      if (bookingTicketStatus == 'bookingTicketStatusBookedByBusiness' || bookingTicketStatus == 'bookingTicketStatusBookedByClient') {
-        var CancelledBooking = Parse.Object.extend("CancelledBooking");
-        var cancelledBooking = new CancelledBooking();
-
-        cancelledBooking.set("cancellationStatus", 'bookingTicketStatusCancelledByBusiness');
-        cancelledBooking.set("cancelledBookingTicket", bookingTicket);
-        var business = bookingTicket.get('business');
-        cancelledBooking.set("cancelledBookingBusiness", business);
-        var now = new Date();
-        cancelledBooking.set("cancellationDate", now);
-
-        var bookingTicketClientStatus = bookingTicket.get('bookingTicketClientStatus');
-        if (bookingTicketClientStatus == 'bookingTicketClientStatusRegistered') {
-          var client = bookingTicket.get('bookingTicketClient');
-          cancelledBooking.set("cancelledBookingClient", client);
-        } else if (bookingTicketClientStatus == 'bookingTicketClientStatusGuest') {
-          var client = bookingTicket.get('bookingTicketGuestClient');
-          cancelledBooking.set("cancelledBookingGuestClient", client);
-        }
-
-        cancelledBooking.save(null, {
-          success: function(cancelledBooking) {
-            alert('New object created with objectId: ' + cancelledBooking.id);
-            var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
-            bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
-            var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
-            bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
-            bookingDay.set("bookingEventStatus", 'bookingEventStatusNotActive');
-            bookingDay.save();
-            
-            var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
-            bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
-            var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
-            bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
-            var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
-            bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
-            bookingEvent.set("bookingEventStatus", 'bookingEventStatusNotActive');
-            bookingEvent.save();
-
-            bookingTicket.set("bookingTicketStatus", 'bookingTicketStatusCancelledByBusiness');
-            bookingTicket.set("bookingEventStatus", 'bookingEventStatusNotActive');
-            bookingTicket.save();
-          },
-          error: function(cancelledBooking, error) {
-            // Execute any logic that should take place if the save fails.
-            // error is a Parse.Error with an error code and message.
-            alert('Failed to create new object, with error code: ' + error.message);
+    success: function(object) {
+      // Successfully retrieved the object.
+      var bookingDay = object;
+      var bookingTickets = bookingDay.get("bookingTickets");
+      for (var i = 0; i < bookingTickets.length; i++) {
+        var bookingTicket = bookingTickets[i];
+        var bookingTicketStatus = bookingTicket.get('bookingTicketStatus');
+        if (bookingTicketStatus == 'bookingTicketStatusBookedByBusiness' || bookingTicketStatus == 'bookingTicketStatusBookedByClient') {
+          var CancelledBooking = Parse.Object.extend("CancelledBooking");
+          var cancelledBooking = new CancelledBooking();
+          
+          cancelledBooking.set("cancellationStatus", 'bookingTicketStatusCancelledByBusiness');
+          cancelledBooking.set("cancelledBookingTicket", bookingTicket);
+          var business = bookingTicket.get('business');
+          cancelledBooking.set("cancelledBookingBusiness", business);
+          var now = new Date();
+          cancelledBooking.set("cancellationDate", now);
+          
+          var bookingTicketClientStatus = bookingTicket.get('bookingTicketClientStatus');
+          if (bookingTicketClientStatus == 'bookingTicketClientStatusRegistered') {
+            var client = bookingTicket.get('bookingTicketClient');
+            cancelledBooking.set("cancelledBookingClient", client);
+          } else if (bookingTicketClientStatus == 'bookingTicketClientStatusGuest') {
+            var client = bookingTicket.get('bookingTicketGuestClient');
+            cancelledBooking.set("cancelledBookingGuestClient", client);
           }
-        });
+          
+          cancelledBooking.save(null, {
+            success: function(cancelledBooking) {
+              alert('New object created with objectId: ' + cancelledBooking.id);
+              var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
+              bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
+              var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
+              bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
+              bookingDay.set("bookingEventStatus", 'bookingEventStatusNotActive');
+              bookingDay.save();
+              
+              var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
+              bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
+              var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
+              bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
+              var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
+              bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
+              bookingEvent.set("bookingEventStatus", 'bookingEventStatusNotActive');
+              bookingEvent.save();
+              
+              bookingTicket.set("bookingTicketStatus", 'bookingTicketStatusCancelledByBusiness');
+              bookingTicket.set("bookingEventStatus", 'bookingEventStatusNotActive');
+              bookingTicket.save();
+            },
+            error: function(cancelledBooking, error) {
+              // Execute any logic that should take place if the save fails.
+              // error is a Parse.Error with an error code and message.
+              alert('Failed to create new object, with error code: ' + error.message);
+            }
+          });
+        }
+        alert(object.id + ' - ' + object.get('playerName'));
       }
-      alert(object.id + ' - ' + object.get('playerName'));
+    },
+    error: function(error) {
+      alert("Error: " + error.code + " " + error.message);
     }
-  },
-  error: function(error) {
-    alert("Error: " + error.code + " " + error.message);
-  }
+  });
 });
