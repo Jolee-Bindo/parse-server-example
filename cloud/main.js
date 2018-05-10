@@ -120,9 +120,10 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
           });
         }
       //  alert(object.id + ' - ' + cancelledBooking.get('objectId'));
-      }
       bookingTicket.set("bookingEventStatus", 'bookingEventStatusNotActive');
       bookingTicket.save();
+
+      }
       response.success('successfully deactivated:', object.get('objectId'));
 
     },
