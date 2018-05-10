@@ -83,7 +83,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
               bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
               var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
               bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
-              bookingDay.set("bookingEventStatus", 'bookingEventStatusNotActive');
+              bookingDay.set("bookingEventStatus", "bookingEventStatusNotActive");
               bookingDay.save();
              
               var BookingEvent = Parse.Object.extend("BookingEvent");
