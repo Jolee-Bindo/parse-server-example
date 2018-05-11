@@ -127,3 +127,35 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
     }
   });
 });
+
+
+Parse.Cloud.define('reactivateSchedule', function(request, response) {
+  var bookingDayId = request.params.bookingDayId;
+  var bookingEventId = request.params.bookingEventId;
+
+  var BookingDay = Parse.Object.extend("BookingDay");
+  var query = new Parse.Query(BookingDay);
+  query.equalTo('objectId', bookingDayId);
+  query.include('bookingTickets');
+  query.first({
+    success: function(object) {
+      // Successfully retrieved the object.
+      var bookingDay = object;
+
+      var bookingTickets = bookingDay.get("bookingTickets");
+      for (var i = 0; i < bookingTickets.length; i++) {
+        var bookingTicket = bookingTickets[i];
+        bookingTicket.set("bookingEventStatus", "bookingEventStatusActive");
+        bookingTicket.save();
+      }
+
+      bookingDay.set("bookingEventStatus", "bookingEventStatusActive");
+      bookingDay.save();
+      response.success('successfully activated BookingDay:', object.get('objectId'));
+    },
+    error: function(error) {
+      response.error('Error in deactivation booking day:', error);
+    }
+  });
+});
+
