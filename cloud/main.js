@@ -32,7 +32,7 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
         });
 });
 
-Parse.Cloud.define('deactivateEvent', function(request, response) {
+Parse.Cloud.define('deactivateSchedule', function(request, response) {
   var bookingDayId = request.params.bookingDayId;
   var bookingEventId = request.params.bookingEventId;
   
@@ -66,9 +66,12 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
           if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
             var client = bookingTicket.get("client");
             cancelledBooking.set("cancelledBookingClient", client);
+            bookingTicket.set("client", null);
+
           } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
             var client = bookingTicket.get("guestClient");
             cancelledBooking.set("cancelledBookingGuestClient", client);
+            bookingTicket.set("guestClient", null);
           }
           
           cancelledBooking.save(null, {
@@ -94,28 +97,24 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
                   bookingEvent.save();
                 },
                 error: function(error) {
-                //  alert("Booking Event Error: " + error.code + " " + error.message);
-                  console.log('booking event not found');
-                //  response.error("Booking Event Error");
-
+                 // console.log('booking event not found');
+                 response.error('Booking Event Error:', error);
                 }
               });
               
             },
             error: function(cancelledBooking, error) {
-              // Execute any logic that should take place if the save fails.
               // error is a Parse.Error with an error code and message.
-              console.log('cancelled booking error');
-
-              alert('Failed to create new object, with error code: ' + error.message);
+              //console.log('cancelled booking error');
+              response.error('Booking Event Error:', error);
             }
           });
         }
       //  alert(object.id + ' - ' + cancelledBooking.get('objectId'));
       bookingTicket.set("bookingEventStatus", 'bookingEventStatusNotActive');
       bookingTicket.save();
-
       }
+      
       bookingDay.set("bookingEventStatus", "bookingEventStatusNotActive");
       bookingDay.save();
 
@@ -123,8 +122,8 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
 
     },
     error: function(error) {
-      alert("Error: " + error.code + " " + error.message);
-      response.error("Error here...");
+      //alert("Error: " + error.code + " " + error.message);
+      response.error('Error in deactivation booking day:', error);
     }
   });
 });
