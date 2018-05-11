@@ -51,6 +51,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
         var bookingTicket = bookingTickets[i];
         var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
         if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {
+          bookingTicket.set("bookingTicketStatus", "cancelledByBusiness");
           var CancelledBooking = Parse.Object.extend("CancelledBooking");
           var cancelledBooking = new CancelledBooking();
           
@@ -61,12 +62,12 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
           var now = new Date();
           cancelledBooking.set("cancellationDate", now);
           
-          var bookingTicketClientStatus = bookingTicket.get('bookingTicketClientStatus');
+          var bookingTicketClientStatus = bookingTicket.get("bookingTicketclientStatus");
           if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
             var client = bookingTicket.get("client");
             cancelledBooking.set("cancelledBookingClient", client);
           } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
-            var client = bookingTicket.get("bookingTicketGuestClient");
+            var client = bookingTicket.get("guestClient");
             cancelledBooking.set("cancelledBookingGuestClient", client);
           }
           
@@ -100,7 +101,6 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
                 }
               });
               
-              bookingTicket.set("bookingTicketStatus", "cancelledByBusiness");
             },
             error: function(cancelledBooking, error) {
               // Execute any logic that should take place if the save fails.
