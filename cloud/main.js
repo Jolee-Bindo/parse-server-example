@@ -77,8 +77,6 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
           
           cancelledBooking.save(null, {
             success: function(cancelledBooking) {
-              console.log('cancelledBooking created with ID:', cancelledBooking.get('objectId'));
-
               var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
               bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
               var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
@@ -87,7 +85,7 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
               bookingDay.save();
              
               var BookingEvent = Parse.Object.extend("BookingEvent");
-              var query = new Parse.Query(BookingEvent);
+              var eventQuery = new Parse.Query(BookingEvent);
               eventQuery.equalTo('objectId', bookingEventId);
               eventQuery.first({
                 success: function(object) {
@@ -105,7 +103,8 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
                 },
                 error: function(error) {
                 //  alert("Booking Event Error: " + error.code + " " + error.message);
-                        response.error("Booking Event Error");
+                  console.log('booking event not found');
+                //  response.error("Booking Event Error");
 
                 }
               });
@@ -115,6 +114,8 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
             error: function(cancelledBooking, error) {
               // Execute any logic that should take place if the save fails.
               // error is a Parse.Error with an error code and message.
+              console.log('cancelled booking error');
+
               alert('Failed to create new object, with error code: ' + error.message);
             }
           });
