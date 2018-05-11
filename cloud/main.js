@@ -111,11 +111,11 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           });
         }
       //  alert(object.id + ' - ' + cancelledBooking.get('objectId'));
-      bookingTicket.set("bookingEventStatus", 'bookingEventStatusNotActive');
+      bookingTicket.set("bookingEventStatus", 'bookingEventStatusDeactivated');
       bookingTicket.save();
       }
       
-      bookingDay.set("bookingEventStatus", "bookingEventStatusNotActive");
+      bookingDay.set("bookingEventStatus", "bookingEventStatusDeactivated");
       bookingDay.save();
 
       response.success('successfully deactivated BookingDay:', object.get('objectId'));
