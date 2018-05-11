@@ -45,33 +45,28 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
       // Successfully retrieved the object.
       var bookingDay = object;
       var bookingDayID = bookingDay.get("objectId");
-      console.log('bookingDay:', bookingDay);
 
       var bookingTickets = bookingDay.get("bookingTickets");
-      console.log('Booking Tickets length:', bookingTickets.length);
       for (var i = 0; i < bookingTickets.length; i++) {
         var bookingTicket = bookingTickets[i];
         var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
-        console.log('bookingTicketStatus:', bookingTicketStatus);
         if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {
-          console.log("here");
-
           var CancelledBooking = Parse.Object.extend("CancelledBooking");
           var cancelledBooking = new CancelledBooking();
           
           cancelledBooking.set("cancellationStatus", 'bookingTicketStatusCancelledByBusiness');
           cancelledBooking.set("cancelledBookingTicket", bookingTicket);
-          var business = bookingTicket.get('business');
+          var business = bookingTicket.get("Business");
           cancelledBooking.set("cancelledBookingBusiness", business);
           var now = new Date();
           cancelledBooking.set("cancellationDate", now);
           
           var bookingTicketClientStatus = bookingTicket.get('bookingTicketClientStatus');
-          if (bookingTicketClientStatus == 'bookingTicketClientStatusRegistered') {
-            var client = bookingTicket.get('bookingTicketClient');
+          if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
+            var client = bookingTicket.get("client");
             cancelledBooking.set("cancelledBookingClient", client);
-          } else if (bookingTicketClientStatus == 'bookingTicketClientStatusGuest') {
-            var client = bookingTicket.get('bookingTicketGuestClient');
+          } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
+            var client = bookingTicket.get("bookingTicketGuestClient");
             cancelledBooking.set("cancelledBookingGuestClient", client);
           }
           
@@ -81,8 +76,6 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
               bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
               var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
               bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
-              bookingDay.set("bookingEventStatus", "bookingEventStatusNotActive");
-              bookingDay.save();
              
               var BookingEvent = Parse.Object.extend("BookingEvent");
               var eventQuery = new Parse.Query(BookingEvent);
@@ -90,8 +83,6 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
               eventQuery.first({
                 success: function(object) {
                   // Successfully retrieved the object.
-                  console.log('booking event foundwith ID:', object.get('objectId'));
-
                   var bookingEvent = object;
                   var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
                   bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
@@ -125,7 +116,10 @@ Parse.Cloud.define('deactivateEvent', function(request, response) {
       bookingTicket.save();
 
       }
-      response.success('successfully deactivated:', object.get('objectId'));
+      bookingDay.set("bookingEventStatus", "bookingEventStatusNotActive");
+      bookingDay.save();
+
+      response.success('successfully deactivated BookingDay:', object.get('objectId'));
 
     },
     error: function(error) {
