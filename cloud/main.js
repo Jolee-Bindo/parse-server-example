@@ -153,19 +153,25 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
       bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
       
       //
+              console.log('*********************************************************');
+
         bookingTicket.save(null, {
           success: function(bookingTicket) {
+                                            console.log('+++++++++++++++++++++++++++++++++++++++++++++++++');
+
             var businessName = bookingTicket.get("businessName");
             var cancellationNotificationMessage = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
             
+                  var bookingDate = bookingTicket.get("bookingTicketDate");
             var dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric"};  
-            cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", dateOptions).format(date) + "\n";
+            cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", dateOptions).format(bookingDate) + "\n";
 
+                  var bookingTime = bookingTicket.get("bookingTicketStartTime");
             var timeOptions = { hour: "2-digit", minute: "2-digit"};
-            cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", timeOptions).format(date);
+            cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingTime);
             console.log('######################################################################################');
             console.log(cancellationNotificationMessage);    
-            sendNotification(userId, message,
+            sendNotification(clientId, cancellationNotificationMessage,
                              function (errorMessage, result) {
               if (errorMessage)
                 response.error(result);
