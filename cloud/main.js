@@ -30,7 +30,6 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
         });
 });
 */
-
 Parse.Cloud.define('sendPushNotification', function(request, response) {
   var userId = request.params.userId;
   var message = request.params.message;
