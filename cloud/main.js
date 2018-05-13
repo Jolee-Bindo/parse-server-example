@@ -79,63 +79,64 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
   query.equalTo('objectId', bookingDayId);
   query.include('bookingTickets');
   query.first({
-    success: function(bookingDay) {
+    success: function(bookingDay){
       // Successfully retrieved booking day.
       var bookingTickets = bookingDay.get("bookingTickets");
-
+      
       var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
       if(numberOfReservedBookingsPerDay > 0) {
-         var BookingEvent = Parse.Object.extend("BookingEvent");
-         var eventQuery = new Parse.Query(BookingEvent);
-         eventQuery.equalTo('objectId', bookingEventId);
-         eventQuery.first({
-                 success: function(bookingEvent) {
-                      for (var i = 0; i < bookingTickets.length; i++) {
-                        var bookingTicket = bookingTickets[i];
-                        cancellBookingTicket(userId, message,
-                          function (errorMessage, result) {
-                            if (errorMessage) {
-                              response.error(result);
-
-                            } else {
-                              /// update booking day according to cancellation
-                              var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
-                              bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
-                              var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
-                              bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
-
-                              /// update booking event according to cancellation 
-                              var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
-                              bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
-                              var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
-                              bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
-                              var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
-                              bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
-                            }
-                          });
-                      }
-                      bookingEvent.save();
-                },
-                error: function(error) {
-                  response.error('Booking Event Error:', error);
-                }
+        var BookingEvent = Parse.Object.extend("BookingEvent");
+        var eventQuery = new Parse.Query(BookingEvent);
+        eventQuery.equalTo('objectId', bookingEventId);
+        eventQuery.first({
+          success: function(bookingEvent) {
+            for (var i = 0; i < bookingTickets.length; i++) {
+              var bookingTicket = bookingTickets[i];
+              cancellBookingTicket(userId, message,
+                function (errorMessage, result) {
+                  if (errorMessage) {
+                    response.error(result);
+                    
+                  } else {
+                    /// update booking day according to cancellation
+                    var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
+                    bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
+                    var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
+                    bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
+                    
+                    /// update booking event according to cancellation 
+                    var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
+                    bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
+                    var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
+                    bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
+                    var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
+                    bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
+                  }
+                });
+              }
+              bookingEvent.save();
+            },
+            error: function(error) {
+              response.error('Booking Event Error:', error);
+            }
           });
-      } else {
-        for (var i = 0; i < bookingTickets.length; i++) {
-          var bookingTicket = bookingTickets[i];
-          bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
-          bookingTicket.save();
-      }
-      bookingDay.set("bookingEventStatus", "bookingEventStatusDeactivated");
-      bookingDay.save();
+        } else {
+          for (var i = 0; i < bookingTickets.length; i++) {
+            var bookingTicket = bookingTickets[i];
+            bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
+            bookingTicket.save();
+          }
+        }
+        bookingDay.set("bookingEventStatus", "bookingEventStatusDeactivated");
+        bookingDay.save();
         
-      response.success("successfully deactivated BookingDay");
-    },
-    error: function(error) {
-      response.error('Error in deactivation booking day:', error);
-    }
+        response.success("successfully deactivated BookingDay");
+      },
+      error: function(error) {
+        response.error('Error in deactivation booking day:', error);
+      }
+    });
   });
-});
 
 function cancellBookingTicket(bookingTicket, callback){
   bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
