@@ -101,10 +101,11 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           cancelledBooking.set("cancellationDate", now);
           
           var bookingTicketClientStatus = bookingTicket.get("bookingTicketclientStatus");
-          
+          var clientId;
           if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
             var client = bookingTicket.get("client");
-            console.log('client id:', client.get("objectId"));
+                  clientId = client.id;
+            console.log('client id:', client.id);
                   console.log('ORR client id:', client.get("id"));
 
             cancelledBooking.set("cancelledBookingClient", client);
@@ -112,6 +113,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
             
           } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
             var client = bookingTicket.get("guestClient");
+                                    clientId = client.id;
+
             cancelledBooking.set("cancelledBookingGuestClient", client);
             bookingTicket.set("guestClient", null);
           }
