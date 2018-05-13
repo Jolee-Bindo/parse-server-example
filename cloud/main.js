@@ -197,7 +197,7 @@ function cancellBookingTicket(bookingTicket, businessName, callback){
           callback('error', error.message);
         }
       });
-});
+}
 
 function sendNotification2(userId, businessName, bookingDate, bookingStartTime, bookingFinishTime, callback) {
   var message = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
