@@ -35,9 +35,9 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
 
 Parse.Cloud.define('sendPushNotification', function(request, response) {
   var userId = request.params.userId;
-  var message = request.params.message;
+  var messageString = request.params.message;
   
-  var result = sendNotification(userId, message);
+  var result = sendNotification(userId, messageString);
   if (result == 'Success') {
     response.success();
   } else {
@@ -45,7 +45,7 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
   }
 });
 
-function sendNotification(userId, message) {
+function sendNotification(userId, messageString) {
   var queryUser = new Parse.Query(Parse.User);
   queryUser.equalTo('objectId', userId);
   console.log('here');
@@ -55,7 +55,7 @@ function sendNotification(userId, message) {
   Parse.Push.send({
     where: query,
     data: {
-      alert: message,
+      alert: messageString,
       badge: 1,
       sound: 'default'
     }
