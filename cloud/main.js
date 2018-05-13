@@ -74,7 +74,6 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
   var bookingDayId = request.params.bookingDayId;
   var bookingEventId = request.params.bookingEventId;
   var businessName = request.params.businessName;
-                          console.log('business name 1:', businessName);
 
   var BookingDay = Parse.Object.extend("BookingDay");
   var query = new Parse.Query(BookingDay);
@@ -102,18 +101,17 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           cancelledBooking.set("cancellationDate", now);
           
           var bookingTicketClientStatus = bookingTicket.get("bookingTicketclientStatus");
-          var clientId;
           
           if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
             var client = bookingTicket.get("client");
-            console.log('clinet:', client);
-            clientId = client.get("id");
+            console.log('client id:', client.get("objectId"));
+                  console.log('ORR client id:', client.get("id"));
+
             cancelledBooking.set("cancelledBookingClient", client);
             bookingTicket.set("client", null);
             
           } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
             var client = bookingTicket.get("guestClient");
-            clientId = client.get("id");
             cancelledBooking.set("cancelledBookingGuestClient", client);
             bookingTicket.set("guestClient", null);
           }
@@ -129,7 +127,6 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
               bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
               bookingTicket.save(null, {
                 success: function(bookingTicket) {
-                        console.log('business name 2:', businessName);
                   var cancellationNotificationMessage = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
                   
                   var bookingDate = bookingTicket.get("bookingTicketDate");
