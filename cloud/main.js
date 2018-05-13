@@ -104,17 +104,13 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           var clientId;
           if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
             var client = bookingTicket.get("client");
-                  clientId = client.id;
-            console.log('client id:', client.id);
-                  console.log('ORR client id:', client.get("id"));
-
+            clientId = client.id;
             cancelledBooking.set("cancelledBookingClient", client);
             bookingTicket.set("client", null);
             
           } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
             var client = bookingTicket.get("guestClient");
-                                    clientId = client.id;
-
+            clientId = client.id;
             cancelledBooking.set("cancelledBookingGuestClient", client);
             bookingTicket.set("guestClient", null);
           }
@@ -136,17 +132,15 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                   var dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric"};  
                   cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", dateOptions).format(bookingDate) + "\n";
                   
-                  var bookingTime = bookingTicket.get("bookingTicketStartTime");
+                  var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
+                  var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
                   var timeOptions = { hour: "2-digit", minute: "2-digit"};
-                  cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingTime);
-                  console.log('################################', clientId);
+                  cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingStartTime) + " to " + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingFinishTime);
                   console.log(cancellationNotificationMessage);
                   sendNotification(clientId, cancellationNotificationMessage,
                     function (errorMessage, result) {
                       if (errorMessage)
                       response.error(result);
-                      //  else 
-                      //    response.success();
                     });
                     
                   },
