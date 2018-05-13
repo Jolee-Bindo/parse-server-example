@@ -92,29 +92,35 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           success: function(bookingEvent) {
             for (var i = 0; i < bookingTickets.length; i++) {
               var bookingTicket = bookingTickets[i];
-              cancellBookingTicket(bookingTicket, businessName,
-                function (errorMessage, result) {
-                  if (errorMessage) {
-                    response.error(result);
-                    
-                  } else {
-                    /// update booking day according to cancellation
-                    var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
-                    bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
-                    var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
-                    bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
-                    
-                    /// update booking event according to cancellation 
-                    var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
-                    bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
-                    var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
-                    bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
-                    var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
-                    bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
-                    bookingEvent.save();
-                  }
-                });
+              bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
+              var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
+              if (bookingTicketStatus == bookedByBusiness ||bookingTicketStatus == bookedByClient) {
+                cancellBookingTicket(bookingTicket, businessName, 
+                  function (errorMessage, result) {
+                    if (errorMessage) {
+                      response.error(result);
+                      
+                    } else {
+                      /// update booking day according to cancellation
+                      var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
+                      bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
+                      var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
+                      bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
+                      
+                      /// update booking event according to cancellation 
+                      var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings") - 1;
+                      bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
+                      var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
+                      bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
+                      var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
+                      bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
+                    }
+                  });
+                } else {
+                  bookingTicket.save();
+                }                
               }
+              bookingEvent.save();
             },
             error: function(error) {
               response.error('Booking Event Error:', error);
@@ -136,14 +142,10 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
         response.error('Error in deactivation booking day:', error);
       }
     });
-  });
+});
 
 function cancellBookingTicket(bookingTicket, businessName, callback){
-  bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
-  var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
-  if (bookingTicketStatus == "bookedByBusiness" ||bookingTicketStatus == "bookedByClient") {
     bookingTicket.set("bookingTicketStatus", "cancelledByBusiness");
-
     var CancelledBooking = Parse.Object.extend("CancelledBooking");
     var cancelledBooking = new CancelledBooking();
     cancelledBooking.set("cancellationStatus", 'cancelledByBusiness');
@@ -151,7 +153,7 @@ function cancellBookingTicket(bookingTicket, businessName, callback){
     var business = bookingTicket.get("Business");
     cancelledBooking.set("cancelledBookingBusiness", business);
     cancelledBooking.set("cancellationDate", new Date());
-
+    
     var bookingTicketClientStatus = bookingTicket.get("bookingTicketclientStatus");
     var clientId;
     if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
@@ -165,7 +167,7 @@ function cancellBookingTicket(bookingTicket, businessName, callback){
       cancelledBooking.set("cancelledBookingGuestClient", client);
       bookingTicket.set("guestClient", null);
     }
-
+    
     cancelledBooking.save(null, {
       success: function(cancelledBooking) {              
         bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
@@ -175,13 +177,13 @@ function cancellBookingTicket(bookingTicket, businessName, callback){
             var bookingDate = bookingTicket.get("bookingTicketDate");              
             var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
             var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
-
+            
             sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
               function (errorMessage, result) {
                 if (errorMessage)
-                  callback('error', error.message);
+                callback('error', error.message);
                 else 
-                  callback(null, 'Success');
+                callback(null, 'Success');
               });
             },
             error: function(bookingTicket, error) {
@@ -195,11 +197,7 @@ function cancellBookingTicket(bookingTicket, businessName, callback){
           callback('error', error.message);
         }
       });
-  } else {
-    bookingTicket.save();
-    callback(null, 'Success');
-  }
-}
+});
 
 function sendNotification2(userId, businessName, bookingDate, bookingStartTime, bookingFinishTime, callback) {
   var message = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
