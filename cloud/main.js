@@ -85,7 +85,6 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
       // Successfully retrieved the object.
       var bookingDay = object;
       var bookingTickets = bookingDay.get("bookingTickets");
-      var clientId;
 
       for (var i = 0; i < bookingTickets.length; i++) {
         var bookingTicket = bookingTickets[i];
@@ -103,6 +102,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           cancelledBooking.set("cancellationDate", now);
           
           var bookingTicketClientStatus = bookingTicket.get("bookingTicketclientStatus");
+                var clientId;
+
           if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
             var client = bookingTicket.get("client");
             clientId = client.get("objectId");
@@ -151,7 +152,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                   var bookingTime = bookingTicket.get("bookingTicketStartTime");
             var timeOptions = { hour: "2-digit", minute: "2-digit"};
             cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingTime);
-            console.log('######################################################################################', clientId);
+            console.log('################################', clientId);
+            console.log(cancellationNotificationMessage);
             sendNotification(clientId, cancellationNotificationMessage,
                              function (errorMessage, result) {
               if (errorMessage)
