@@ -94,7 +94,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
               var bookingTicket = bookingTickets[i];
               bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
               var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
-              if (bookingTicketStatus == bookedByBusiness ||bookingTicketStatus == bookedByClient) {
+              if (bookingTicketStatus == "bookedByBusiness" ||bookingTicketStatus == "bookedByClient") {
                 cancellBookingTicket(bookingTicket, businessName, 
                   function (errorMessage, result) {
                     if (errorMessage) {
