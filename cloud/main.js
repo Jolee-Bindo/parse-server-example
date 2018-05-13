@@ -137,20 +137,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                   var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
                   bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
                   bookingEvent.save();
-                },
-                error: function(error) {
-                 response.error('Booking Event Error:', error);
-                }
-              });
-              
-            },
-            error: function(cancelledBooking, error) {
-              // error is a Parse.Error with an error code and message.
-              response.error('Booking Event Error:', error);
-            }
-          });
-        }
-      bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
+                            
+                        bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
       bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
               bookingTicket.save(null, {
                       success: function(bookingTicket) {
@@ -178,6 +166,20 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
             response.error('Booking Event Error:', error);
           }
         });
+
+                },
+                error: function(error) {
+                 response.error('Booking Event Error:', error);
+                }
+              });
+              
+            },
+            error: function(cancelledBooking, error) {
+              // error is a Parse.Error with an error code and message.
+              response.error('Booking Event Error:', error);
+            }
+          });
+        }
       //bookingTicket.save();
       }
       
