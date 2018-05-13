@@ -92,7 +92,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           success: function(bookingEvent) {
             for (var i = 0; i < bookingTickets.length; i++) {
               var bookingTicket = bookingTickets[i];
-              cancellBookingTicket(bookingTicket,
+              cancellBookingTicket(bookingTicket, businessName
                 function (errorMessage, result) {
                   if (errorMessage) {
                     response.error(result);
@@ -111,10 +111,10 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                     bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
                     var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
                     bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
+                    bookingEvent.save();
                   }
                 });
               }
-              bookingEvent.save();
             },
             error: function(error) {
               response.error('Booking Event Error:', error);
@@ -138,7 +138,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
     });
   });
 
-function cancellBookingTicket(bookingTicket, callback){
+function cancellBookingTicket(bookingTicket, businessName, callback){
   bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
   var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
   if (bookingTicketStatus == "bookedByBusiness" ||bookingTicketStatus == "bookedByClient") {
