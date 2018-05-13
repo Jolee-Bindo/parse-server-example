@@ -2,7 +2,7 @@
 Parse.Cloud.define('hello', function(req, res) {
   res.success('Hi');
 });
-
+/*
 Parse.Cloud.define('sendPushNotification', function(request, response) {
         var userId = request.params.userId;
         var message = request.params.message;
@@ -31,6 +31,48 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
           }
         });
 });
+*/
+
+Parse.Cloud.define('sendPushNotification', function(request, response) {
+  var userId = request.params.userId;
+  var message = request.params.message;
+  
+  var result = sendNotification();
+  if (result == 'Success') {
+    response.success();
+  } else {
+    response.error(result);
+  }
+});
+
+function sendNotification(userId, message) {
+  var queryUser = new Parse.Query(Parse.User);
+  queryUser.equalTo('objectId', userId);
+  console.log('here');
+  var query = new Parse.Query(Parse.Installation);
+  query.matchesQuery('user', queryUser);
+
+  Parse.Push.send({
+    where: query,
+    data: {
+      alert: message,
+      badge: 1,
+      sound: 'default'
+    }
+  }, {
+    useMasterKey: true,
+    success: function() {
+      console.log('##### PUSH OK');
+      return('Success');
+//      response.success();
+    },
+    error: function(error) {
+      console.log('##### PUSH ERROR');
+      return(error.message);
+//      response.error(error.message);
+    }
+  });
+}
 
 Parse.Cloud.define('deactivateSchedule', function(request, response) {
   var bookingDayId = request.params.bookingDayId;
