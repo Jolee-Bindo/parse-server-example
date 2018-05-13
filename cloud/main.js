@@ -37,7 +37,7 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
   var userId = request.params.userId;
   var message = request.params.message;
   
-  var result = sendNotification();
+  var result = sendNotification(userId, message);
   if (result == 'Success') {
     response.success();
   } else {
