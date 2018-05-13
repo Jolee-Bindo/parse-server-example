@@ -74,7 +74,8 @@ function sendNotification(userId, message, callback) {
 Parse.Cloud.define('deactivateSchedule', function(request, response) {
   var bookingDayId = request.params.bookingDayId;
   var bookingEventId = request.params.bookingEventId;
-  
+  var businessName = request.params.businessName;
+        
   var BookingDay = Parse.Object.extend("BookingDay");
   var query = new Parse.Query(BookingDay);
   query.equalTo('objectId', bookingDayId);
@@ -94,7 +95,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           var CancelledBooking = Parse.Object.extend("CancelledBooking");
           var cancelledBooking = new CancelledBooking();
           
-          cancelledBooking.set("cancellationStatus", 'bookingTicketStatusCancelledByBusiness');
+          cancelledBooking.set("cancellationStatus", 'cancelledByBusiness');
           cancelledBooking.set("cancelledBookingTicket", bookingTicket);
           var business = bookingTicket.get("Business");
           cancelledBooking.set("cancelledBookingBusiness", business);
@@ -151,16 +152,9 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
         }
       bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
       bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
-      
-      //
-              console.log('*********************************************************');
-
-        bookingTicket.save(null, {
-          success: function(bookingTicket) {
-                                            console.log('+++++++++++++++++++++++++++++++++++++++++++++++++');
-
-            var businessName = bookingTicket.get("businessName");
-            var cancellationNotificationMessage = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
+              bookingTicket.save(null, {
+                      success: function(bookingTicket) {
+                              var cancellationNotificationMessage = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
             
                   var bookingDate = bookingTicket.get("bookingTicketDate");
             var dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric"};  
@@ -169,8 +163,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                   var bookingTime = bookingTicket.get("bookingTicketStartTime");
             var timeOptions = { hour: "2-digit", minute: "2-digit"};
             cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingTime);
-            console.log('######################################################################################');
-            console.log(cancellationNotificationMessage);    
+            console.log('######################################################################################', clientId);
             sendNotification(clientId, cancellationNotificationMessage,
                              function (errorMessage, result) {
               if (errorMessage)
