@@ -35,17 +35,26 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
 
 Parse.Cloud.define('sendPushNotification', function(request, response) {
   var userId = request.params.userId;
-  var messageString = request.params.message;
+  var message = request.params.message;
   
+  sendNotification(userId, message,
+  function (errorMessage, result) {
+    if (errorMessage)
+      response.error(result);
+    else 
+      response.success();
+  });
+  /*
   var result = sendNotification(userId, messageString);
   if (result == 'Success') {
     response.success();
   } else {
     response.error(result);
   }
+  */
 });
 
-function sendNotification(userId, messageString) {
+function sendNotification(userId, message, callback) {
   var queryUser = new Parse.Query(Parse.User);
   queryUser.equalTo('objectId', userId);
   console.log('here');
@@ -55,7 +64,7 @@ function sendNotification(userId, messageString) {
   Parse.Push.send({
     where: query,
     data: {
-      alert: messageString,
+      alert: message,
       badge: 1,
       sound: 'default'
     }
@@ -63,12 +72,12 @@ function sendNotification(userId, messageString) {
     useMasterKey: true,
     success: function() {
       console.log('##### PUSH OK');
-      return('Success');
+      callback(null, 'Success');
 //      response.success();
     },
     error: function(error) {
       console.log('##### PUSH ERROR');
-      return(error.message);
+      callback('error', error.message);
 //      response.error(error.message);
     }
   });
