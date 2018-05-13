@@ -1,7 +1,5 @@
 
-Parse.Cloud.define('hello', function(req, res) {
-  res.success('Hi');
-});
+
 /*
 Parse.Cloud.define('sendPushNotification', function(request, response) {
         var userId = request.params.userId;
@@ -44,14 +42,6 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
     else 
       response.success();
   });
-  /*
-  var result = sendNotification(userId, messageString);
-  if (result == 'Success') {
-    response.success();
-  } else {
-    response.error(result);
-  }
-  */
 });
 
 function sendNotification(userId, message, callback) {
@@ -73,12 +63,10 @@ function sendNotification(userId, message, callback) {
     success: function() {
       console.log('##### PUSH OK');
       callback(null, 'Success');
-//      response.success();
     },
     error: function(error) {
       console.log('##### PUSH ERROR');
       callback('error', error.message);
-//      response.error(error.message);
     }
   });
 }
@@ -96,6 +84,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
       // Successfully retrieved the object.
       var bookingDay = object;
       var bookingTickets = bookingDay.get("bookingTickets");
+      var clientId;
+
       for (var i = 0; i < bookingTickets.length; i++) {
         var bookingTicket = bookingTickets[i];
         var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
@@ -114,11 +104,13 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           var bookingTicketClientStatus = bookingTicket.get("bookingTicketclientStatus");
           if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
             var client = bookingTicket.get("client");
+            clientId = client.get("objectId");
             cancelledBooking.set("cancelledBookingClient", client);
             bookingTicket.set("client", null);
 
           } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
             var client = bookingTicket.get("guestClient");
+            clientId = client.get("objectId");
             cancelledBooking.set("cancelledBookingGuestClient", client);
             bookingTicket.set("guestClient", null);
           }
@@ -159,7 +151,35 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
         }
       bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
       bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
-      bookingTicket.save();
+      
+      //
+        bookingTicket.save(null, {
+          success: function(bookingTicket) {
+            var businessName = bookingTicket.get("businessName");
+            var cancellationNotificationMessage = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
+            
+            var dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric"};  
+            cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", dateOptions).format(date) + "\n";
+
+            var timeOptions = { hour: "2-digit", minute: "2-digit"};
+            cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", timeOptions).format(date);
+            
+            console.log(cancellationNotificationMessage);    
+            sendNotification(userId, message,
+                             function (errorMessage, result) {
+              if (errorMessage)
+                response.error(result);
+            //  else 
+            //    response.success();
+            });
+    
+          },
+          error: function(bookingTicket, error) {
+              // error is a Parse.Error with an error code and message.
+            response.error('Booking Event Error:', error);
+          }
+        });
+      //bookingTicket.save();
       }
       
       bookingDay.set("bookingEventStatus", "bookingEventStatusDeactivated");
