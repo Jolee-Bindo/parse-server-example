@@ -163,7 +163,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
 
             var timeOptions = { hour: "2-digit", minute: "2-digit"};
             cancellationNotificationMessage = cancellationNotificationMessage + new Intl.DateTimeFormat("en-US", timeOptions).format(date);
-            
+            console.log('######################################################################################');
             console.log(cancellationNotificationMessage);    
             sendNotification(userId, message,
                              function (errorMessage, result) {
