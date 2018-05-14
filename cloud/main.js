@@ -211,8 +211,8 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
 
                   numberOfReservedBookingsPerDay = numberOfReservedBookingsPerDay - 1;
                   numberOfAvailableBookingsPerDay = numberOfAvailableBookingsPerDay + 1;
-                  bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
-                  bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
+                  bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay);
+                  bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay);
                   bookingDay.save();
 
                   /// update booking event according to cancellation 
@@ -223,9 +223,9 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
                   bookingReservedBookings = bookingReservedBookings - 1;
                   bookingAvailableBookings = bookingAvailableBookings + 1;
                   bookingCancelledBookings = bookingCancelledBookings + 1;
-                  bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
-                  bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
-                  bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings + 1);
+                  bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
+                  bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
+                  bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
                   bookingEvent.save(null, {
                           success: function(bookingEvent) {
                                   console.log('bookingReservedBookings: ', bookingEvent.get("bookingReservedBookings"));
