@@ -142,6 +142,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                   bookingTicket.save();
                 }                
               }
+                  /*
               bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay);
               bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay);
               bookingDay.save();
@@ -150,7 +151,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
               bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
               bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
               bookingEvent.save();
-
+*/
             },
             error: function(error) {
               response.error('Booking Event Error:', error);
