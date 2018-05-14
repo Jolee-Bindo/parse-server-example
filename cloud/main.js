@@ -237,7 +237,7 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
                           error: function(bookingEvent, error) {
                           }
                   });
-
+/*
                  /// send push notification to the user to let her know of cancellation
             var bookingDate = bookingTicket.get("bookingTicketDate");              
             var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
@@ -251,6 +251,7 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
              //   else 
              //      callback(null, 'Success');
               });
+              */
             },
             error: function(bookingTicket, error) {
               // error is a Parse.Error with an error code and message.
@@ -327,3 +328,46 @@ Parse.Cloud.define('reactivateSchedule', function(request, response) {
   });
 });
 
+
+Parse.Cloud.afterSave("CancelledBooking", function(request) {
+  const ticketQuery = new Parse.Query("BookingTicket");
+  ticketQuery.get(request.object.get("cancelledBookingTicket").id)
+    .then(function(cancelledBookingTicket) {
+          var bookingDate = cancelledBookingTicket.get("bookingTicketDate");              
+          var bookingStartTime = cancelledBookingTicket.get("bookingTicketStartTime");
+          var bookingFinishTime = cancelledBookingTicket.get("bookingTicketFinishTime");
+
+          var bookingTicketClientStatus = cancelledBookingTicket.get("bookingTicketclientStatus");
+          var clientId;
+          if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
+                  var client = cancelledBookingTicket.get("client");
+                  clientId = client.id;
+          } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
+                  var client = cancelledBookingTicket.get("guestClient");
+                  clientId = client.id;
+          }
+          
+          const businessQuery = new Parse.Query("Business");
+          businessQuery.get(request.object.get("cancelledBookingBusiness").id)
+                 .then(function(cancelledBookingBusiness) {
+                  var businessName = cancelledBookingBusiness.get("businessName");
+                  console.log('here:', businessName);
+                  sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
+                                    function (errorMessage, result) {
+                          if (errorMessage)
+                                  callback('error', error.message);
+             //   else 
+             //      callback(null, 'Success');
+                  });
+
+          })
+          .catch(function(error) {
+                  console.error("Got an error " + error.code + " : " + error.message);
+          });
+
+      return post.save();
+    })
+    .catch(function(error) {
+      console.error("Got an error " + error.code + " : " + error.message);
+    });
+});
