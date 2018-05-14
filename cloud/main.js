@@ -72,7 +72,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
   const query = new Parse.Query("BookingDay");
   query.equalTo("objectId", request.params.bookingDayId);
   query.include("bookingTickets");
-  return eventQuery.first().then(function(bookingDay) {
+  return query.first().then(function(bookingDay) {
     var bookingTickets = bookingDay.get("bookingTickets");   
     var promise = Parse.Promise.as();
     _.each(bookingTickets, function(bookingTicket) {
