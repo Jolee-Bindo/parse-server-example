@@ -101,27 +101,27 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                       console.log("Error here");
                     } else {
                       /// update booking day according to cancellation
-                      var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
-                      bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
-                      var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
-                      bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
-                            console.log('numberOfReservedBookingsPerDay: ', numberOfReservedBookingsPerDay);
-                                                        console.log('numberOfAvailableBookingsPerDay: ', numberOfAvailableBookingsPerDay);
+                  //    var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
+                  //    bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
+                  //    var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
+                  //    bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
+                  //          console.log('numberOfReservedBookingsPerDay: ', numberOfReservedBookingsPerDay);
+                  //                                      console.log('numberOfAvailableBookingsPerDay: ', numberOfAvailableBookingsPerDay);
 
            //           bookingDay.save();
 
                       /// update booking event according to cancellation 
-                      var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings");
-                      bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
-                                                                                    console.log('bookingReservedBookings: ', bookingReservedBookings);
+                //      var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings");
+                //      bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
+ //                                                                                   console.log('bookingReservedBookings: ', bookingReservedBookings);
+//
+   //                   var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings");
+   //                   bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
+     //                                                                               console.log('bookingAvailableBookings: ', bookingAvailableBookings);
 
-                      var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings");
-                      bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
-                                                                                    console.log('bookingAvailableBookings: ', bookingAvailableBookings);
-
-                      var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings");
-                      bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings + 1);     
-                                                                                    console.log('bookingCancelledBookings: ', bookingCancelledBookings);
+       //               var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings");
+       //               bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings + 1);     
+         //                                                                           console.log('bookingCancelledBookings: ', bookingCancelledBookings);
 
                  //     bookingEvent.save();
                     }
