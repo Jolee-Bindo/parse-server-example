@@ -159,52 +159,22 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
         bookingTicket.save(null, {
           success: function(bookingTicket) {              
                   /// update booking day according to cancellation
-                  var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
-                  var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
-
-                  numberOfReservedBookingsPerDay = numberOfReservedBookingsPerDay - 1;
-                  numberOfAvailableBookingsPerDay = numberOfAvailableBookingsPerDay + 1;
-                  bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay);
-                  bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay);
+                  bookingDay.set("numberOfReservedBookingsPerDay", bookingDay.get("numberOfReservedBookingsPerDay") - 1);
+                  bookingDay.set("numberOfAvailableBookingsPerDay", bookingDay.get("numberOfAvailableBookingsPerDay") + 1);
                   bookingDay.save();
 
                   /// update booking event according to cancellation 
-                  var bookingReservedBookings = bookingEvent.get("bookingReservedBookings");
-                  var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings");
-                  var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings");
-
-                  bookingReservedBookings = bookingReservedBookings - 1;
-                  bookingAvailableBookings = bookingAvailableBookings + 1;
-                  bookingCancelledBookings = bookingCancelledBookings + 1;
-                  bookingEvent.set("bookingReservedBookings", bookingReservedBookings);
-                  bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
-                  bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
+                  bookingEvent.set("bookingReservedBookings", bookingEvent.get("bookingReservedBookings") - 1);
+                  bookingEvent.set("bookingAvailableBookings", bookingEvent.get("bookingAvailableBookings") + 1);
+                  bookingEvent.set("bookingCancelledBookings", bookingEvent.get("bookingCancelledBookings") + 1);
                   bookingEvent.save(null, {
                           success: function(bookingEvent) {
-                                  console.log('bookingReservedBookings: ', bookingEvent.get("bookingReservedBookings"));
-                                  console.log('bookingAvailableBookings: ', bookingEvent.get("bookingAvailableBookings"));
-                                  console.log('bookingCancelledBookings: ', bookingEvent.get("bookingCancelledBookings"));
                                    callback(null, 'Success');
-
                           },
                           error: function(bookingEvent, error) {
+                                   callback('error', error.message);
                           }
                   });
-/*
-                 /// send push notification to the user to let her know of cancellation
-            var bookingDate = bookingTicket.get("bookingTicketDate");              
-            var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
-            var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
-            
-
-            sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
-              function (errorMessage, result) {
-                if (errorMessage)
-                   callback('error', error.message);
-             //   else 
-             //      callback(null, 'Success');
-              });
-              */
             },
             error: function(bookingTicket, error) {
               // error is a Parse.Error with an error code and message.
