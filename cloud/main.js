@@ -176,7 +176,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
     });
 });
 
-function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, businessName, callback){
+function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, businessName, callback) {
     bookingTicket.set("bookingTicketStatus", "cancelledByBusiness");
     var CancelledBooking = Parse.Object.extend("CancelledBooking");
     var cancelledBooking = new CancelledBooking();
@@ -332,40 +332,34 @@ Parse.Cloud.define('reactivateSchedule', function(request, response) {
 Parse.Cloud.afterSave("CancelledBooking", function(request) {
   const ticketQuery = new Parse.Query("BookingTicket");
   ticketQuery.get(request.object.get("cancelledBookingTicket").id)
-    .then(function(cancelledBookingTicket) {
-          var bookingDate = cancelledBookingTicket.get("bookingTicketDate");              
-          var bookingStartTime = cancelledBookingTicket.get("bookingTicketStartTime");
-          var bookingFinishTime = cancelledBookingTicket.get("bookingTicketFinishTime");
-
-          var clientId;
-          if (request.object.get("cancelledBookingClient") != null) {
-                  clientId = request.object.get("cancelledBookingClient").id;
-
-          } else if (request.object.get("cancelledBookingGuestClient") != null) {
-                  clientId = request.object.get("cancelledBookingGuestClient").id;
-          }
-          
-          const businessQuery = new Parse.Query("Business");
-          console.log('client id:', clientId);
-          businessQuery.get(request.object.get("cancelledBookingBusiness").id)
-                 .then(function(cancelledBookingBusiness) {
-                  var businessName = cancelledBookingBusiness.get("businessName");
-                  sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
-                                    function (errorMessage, result) {
-                          if (errorMessage)
-                                  callback('error', error.message);
-             //   else 
-             //      callback(null, 'Success');
-                  });
-
-          })
-          .catch(function(error) {
-                  console.error("Got an error " + error.code + " : " + error.message);
-          });
-
-   //   return post.save();
+  .then(function(cancelledBookingTicket) {
+    var bookingDate = cancelledBookingTicket.get("bookingTicketDate");              
+    var bookingStartTime = cancelledBookingTicket.get("bookingTicketStartTime");
+    var bookingFinishTime = cancelledBookingTicket.get("bookingTicketFinishTime");
+    
+    var clientId;
+    if (request.object.get("cancelledBookingClient") != null) {
+      clientId = request.object.get("cancelledBookingClient").id;
+      
+    } else if (request.object.get("cancelledBookingGuestClient") != null) {
+      clientId = request.object.get("cancelledBookingGuestClient").id;
+    }
+    
+    const businessQuery = new Parse.Query("Business");
+    businessQuery.get(request.object.get("cancelledBookingBusiness").id)
+    .then(function(cancelledBookingBusiness) {
+      var businessName = cancelledBookingBusiness.get("businessName");
+      sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
+        function (errorMessage, result) {
+          if (errorMessage)
+          callback('error', error.message);
+        });
     })
     .catch(function(error) {
-      console.error("Got an error " + error.code + " : " + error.message);
+        console.error("Got an error " + error.code + " : " + error.message);
     });
+  })
+  .catch(function(error) {
+    console.error("Got an error " + error.code + " : " + error.message);
+  });
 });
