@@ -138,8 +138,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
             bookingTicket.save();
           }
         }
-        bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
-        bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
+        bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay);
+        bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay);
         bookingDay.set("bookingEventStatus", "bookingEventStatusDeactivated");
         bookingDay.save();
         
