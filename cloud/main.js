@@ -109,16 +109,21 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                       /// update booking event according to cancellation 
                       var bookingReservedBookings = bookingEvent.get("bookingReservedBookings");
                       bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
-                      console.log('bookingReservedBookings: ', bookingReservedBookings);
                             
                       var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings");
                       bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
-                      console.log('bookingAvailableBookings: ', bookingAvailableBookings);
 
                       var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings");
                       bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings + 1);
-                      console.log('bookingCancelledBookings: ', bookingCancelledBookings);
-                      bookingEvent.save();
+                      bookingEvent.save(null, {
+                              success: function(bookingEvent) {
+                                      console.log('bookingReservedBookings: ', bookingEvent.get("bookingReservedBookings"));
+                                      console.log('bookingAvailableBookings: ', bookingEvent.get("bookingAvailableBookings"));
+                                      console.log('bookingCancelledBookings: ', bookingEvent.get("bookingCancelledBookings"));
+                              },
+                              error: function(bookingEvent, error) {
+                              }
+                      });
                     }
                   });
                 } else {
