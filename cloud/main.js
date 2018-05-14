@@ -108,7 +108,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                             console.log('numberOfReservedBookingsPerDay: ', numberOfReservedBookingsPerDay);
                                                         console.log('numberOfAvailableBookingsPerDay: ', numberOfAvailableBookingsPerDay);
 
-                      bookingDay.save();
+           //           bookingDay.save();
 
                       /// update booking event according to cancellation 
                       var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings");
