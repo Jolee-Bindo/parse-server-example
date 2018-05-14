@@ -231,6 +231,8 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
                                   console.log('bookingReservedBookings: ', bookingEvent.get("bookingReservedBookings"));
                                   console.log('bookingAvailableBookings: ', bookingEvent.get("bookingAvailableBookings"));
                                   console.log('bookingCancelledBookings: ', bookingEvent.get("bookingCancelledBookings"));
+                                   callback(null, 'Success');
+
                           },
                           error: function(bookingEvent, error) {
                           }
@@ -241,7 +243,6 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
             var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
             var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
             
-            callback(null, 'Success');
 
             sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
               function (errorMessage, result) {
