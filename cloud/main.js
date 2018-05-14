@@ -272,7 +272,7 @@ function sendNotification2(userId, businessName, bookingDate, bookingStartTime, 
   message = message + new Intl.DateTimeFormat("en-US", dateOptions).format(bookingDate) + "\n";  
   var timeOptions = { hour: "2-digit", minute: "2-digit"};
   message = message + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingStartTime) + " to " + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingFinishTime);
-  
+  console.log('message: ', message);
   var queryUser = new Parse.Query(Parse.User);
   queryUser.equalTo('objectId', userId);
   var query = new Parse.Query(Parse.Installation);
@@ -348,7 +348,7 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
           }
           
           const businessQuery = new Parse.Query("Business");
-          console.log('business id:', request.object.get("cancelledBookingBusiness").id)
+          console.log('business id:', request.object.get("cancelledBookingBusiness").id);
           businessQuery.get(request.object.get("cancelledBookingBusiness").id)
                  .then(function(cancelledBookingBusiness) {
                   var businessName = cancelledBookingBusiness.get("businessName");
@@ -366,7 +366,7 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
                   console.error("Got an error " + error.code + " : " + error.message);
           });
 
-      return post.save();
+   //   return post.save();
     })
     .catch(function(error) {
       console.error("Got an error " + error.code + " : " + error.message);
