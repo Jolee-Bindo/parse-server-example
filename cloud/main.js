@@ -82,7 +82,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
       // Successfully retrieved booking day.
       var bookingTickets = bookingDay.get("bookingTickets");                      
       var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
-      var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
+ //     var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
 
       if(numberOfReservedBookingsPerDay > 0) {
         var BookingEvent = Parse.Object.extend("BookingEvent");
@@ -90,21 +90,23 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
         eventQuery.equalTo('objectId', bookingEventId);
         eventQuery.first({
           success: function(bookingEvent) {
+                  /*
             var bookingReservedBookings = bookingEvent.get("bookingReservedBookings");
             var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings");
             var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings");
-
+*/
             for (var i = 0; i < bookingTickets.length; i++) {
               var bookingTicket = bookingTickets[i];
               bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
               var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
               if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {
-                cancellBookingTicket(bookingTicket, businessName, 
+                cancellBookingTicket(bookingTicket, bookingDay, bookingEvent, businessName, 
                   function (errorMessage, result) {
                     if (errorMessage) {
                     //  response.error(result);
                       console.log("Error here");
                     } else {
+                            /*
                       /// update booking day according to cancellation
                       numberOfReservedBookingsPerDay = numberOfReservedBookingsPerDay - 1;
                       numberOfAvailableBookingsPerDay = numberOfAvailableBookingsPerDay + 1;
@@ -119,7 +121,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                       console.log('bookingReservedBookings: ', bookingReservedBookings);
                       console.log('bookingAvailableBookings: ', bookingAvailableBookings);
                       console.log('bookingCancelledBookings: ', bookingCancelledBookings);
-
+*/
                   /*
                       bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
                       bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
@@ -173,7 +175,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
     });
 });
 
-function cancellBookingTicket(bookingTicket, businessName, callback){
+function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, businessName, callback){
     bookingTicket.set("bookingTicketStatus", "cancelledByBusiness");
     var CancelledBooking = Parse.Object.extend("CancelledBooking");
     var cancelledBooking = new CancelledBooking();
@@ -202,7 +204,38 @@ function cancellBookingTicket(bookingTicket, businessName, callback){
         bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
         bookingTicket.save(null, {
           success: function(bookingTicket) {              
-            /// send push notification to the user to let her know of cancellation
+                  /// update booking day according to cancellation
+                  var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
+                  var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
+
+                  numberOfReservedBookingsPerDay = numberOfReservedBookingsPerDay - 1;
+                  numberOfAvailableBookingsPerDay = numberOfAvailableBookingsPerDay + 1;
+                  bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
+                  bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
+                  bookingDay.save();
+
+                  /// update booking event according to cancellation 
+                  var bookingReservedBookings = bookingEvent.get("bookingReservedBookings");
+                  var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings");
+                  var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings");
+
+                  bookingReservedBookings = bookingReservedBookings - 1;
+                  bookingAvailableBookings = bookingAvailableBookings + 1;
+                  bookingCancelledBookings = bookingCancelledBookings + 1;
+                  bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
+                  bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
+                  bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings + 1);
+                  bookingEvent.save(null, {
+                          success: function(bookingEvent) {
+                                  console.log('bookingReservedBookings: ', bookingEvent.get("bookingReservedBookings"));
+                                  console.log('bookingAvailableBookings: ', bookingEvent.get("bookingAvailableBookings"));
+                                  console.log('bookingCancelledBookings: ', bookingEvent.get("bookingCancelledBookings"));
+                          },
+                          error: function(bookingEvent, error) {
+                          }
+                  });
+
+                 /// send push notification to the user to let her know of cancellation
             var bookingDate = bookingTicket.get("bookingTicketDate");              
             var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
             var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
