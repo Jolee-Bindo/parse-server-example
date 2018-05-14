@@ -272,11 +272,11 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
       bookingDay.save();
 
       const eventQuery = new Parse.Query("BookingEvent");
-      eventQuery.equalTo("bookingDays", bookingDay);
+      eventQuery.equalTo("bookingDays", bookingDay.id);
       eventQuery.first({
       success: function(bookingEvent) {
         // Successfully retrieved the object.
-        console.log('booking event: ', bookingEvent);
+        console.log('booking event: ', bookingEvent.id);
         /// update booking day according to cancellation
         /// update booking event according to cancellation 
         bookingEvent.set("bookingReservedBookings", bookingEvent.get("bookingReservedBookings") - 1);
