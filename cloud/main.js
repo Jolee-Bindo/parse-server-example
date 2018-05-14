@@ -157,7 +157,8 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
       success: function(cancelledBooking) {              
         bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
         bookingTicket.save(null, {
-          success: function(bookingTicket) {              
+          success: function(bookingTicket) {          
+                  console.log('bookingTicket:', bookingTicket.get("bookingTicketDate"));
                   /// update booking day according to cancellation
                   bookingDay.set("numberOfReservedBookingsPerDay", bookingDay.get("numberOfReservedBookingsPerDay") - 1);
                   bookingDay.set("numberOfAvailableBookingsPerDay", bookingDay.get("numberOfAvailableBookingsPerDay") + 1);
@@ -169,6 +170,7 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
                   bookingEvent.set("bookingCancelledBookings", bookingEvent.get("bookingCancelledBookings") + 1);
                   bookingEvent.save(null, {
                           success: function(bookingEvent) {
+                                  console.log('Cancelled Bookings: ', bookingEvent.get("bookingCancelledBookings"));
                                    callback(null, 'Success');
                           },
                           error: function(bookingEvent, error) {
