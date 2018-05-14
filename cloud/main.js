@@ -348,7 +348,7 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
           }
           
           const businessQuery = new Parse.Query("Business");
-          console.log('business id:', request.object.get("cancelledBookingBusiness").id);
+          console.log('client id:', clientId);
           businessQuery.get(request.object.get("cancelledBookingBusiness").id)
                  .then(function(cancelledBookingBusiness) {
                   var businessName = cancelledBookingBusiness.get("businessName");
