@@ -116,6 +116,10 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                       bookingReservedBookings = bookingReservedBookings - 1;
                       bookingAvailableBookings = bookingAvailableBookings + 1;
                       bookingCancelledBookings = bookingCancelledBookings + 1;
+                      console.log('bookingReservedBookings: ', bookingReservedBookings);
+                      console.log('bookingAvailableBookings: ', bookingAvailableBookings);
+                      console.log('bookingCancelledBookings: ', bookingCancelledBookings);
+
                   /*
                       bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
                       bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
