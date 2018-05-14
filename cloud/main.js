@@ -98,8 +98,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                 cancellBookingTicket(bookingTicket, businessName, 
                   function (errorMessage, result) {
                     if (errorMessage) {
-                      response.error(result);
-                      
+                    //  response.error(result);
+                      console.log("Error here");
                     } else {
                       /// update booking day according to cancellation
                       var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
@@ -113,7 +113,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                       var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
                       bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
                       var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
-                      bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
+//                      bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
                     }
                   });
                 } else {
@@ -123,7 +123,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
               bookingEvent.save();
             },
             error: function(error) {
-              response.error('Booking Event Error:', error);
+           //   response.error('Booking Event Error:', error);
+                    console.log("Booking Event Error");
             }
           });
         } else {
@@ -181,9 +182,9 @@ function cancellBookingTicket(bookingTicket, businessName, callback){
             sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
               function (errorMessage, result) {
                 if (errorMessage)
-                callback('error', error.message);
+                   callback('error', error.message);
                 else 
-                callback(null, 'Success');
+                   callback(null, 'Success');
               });
             },
             error: function(bookingTicket, error) {
