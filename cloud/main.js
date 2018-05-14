@@ -123,7 +123,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                       bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings + 1);     
                                                                                     console.log('bookingCancelledBookings: ', bookingCancelledBookings);
 
-                      bookingEvent.save();
+                 //     bookingEvent.save();
                     }
                   });
                 } else {
