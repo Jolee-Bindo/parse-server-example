@@ -100,30 +100,28 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                     //  response.error(result);
                       console.log("Error here");
                     } else {
+                      console.log('success cancel booking ticket');
                       /// update booking day according to cancellation
-                  //    var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
-                  //    bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
-                  //    var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
-                  //    bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
-                  //          console.log('numberOfReservedBookingsPerDay: ', numberOfReservedBookingsPerDay);
-                  //                                      console.log('numberOfAvailableBookingsPerDay: ', numberOfAvailableBookingsPerDay);
-
-           //           bookingDay.save();
+                      var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
+                      bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
+                      var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
+                      bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
+                      console.log('numberOfReservedBookingsPerDay: ', numberOfReservedBookingsPerDay);
+                      console.log('numberOfAvailableBookingsPerDay: ', numberOfAvailableBookingsPerDay);
+                      bookingDay.save();
 
                       /// update booking event according to cancellation 
-                //      var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings");
-                //      bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
- //                                                                                   console.log('bookingReservedBookings: ', bookingReservedBookings);
-//
-   //                   var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings");
-   //                   bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
-     //                                                                               console.log('bookingAvailableBookings: ', bookingAvailableBookings);
+                      var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings");
+                      bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
+                      console.log('bookingReservedBookings: ', bookingReservedBookings);
+                      var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings");
+                      bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
+                      console.log('bookingAvailableBookings: ', bookingAvailableBookings);
 
-       //               var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings");
-       //               bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings + 1);     
-         //                                                                           console.log('bookingCancelledBookings: ', bookingCancelledBookings);
-
-                 //     bookingEvent.save();
+                      var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings");
+                      bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings + 1);
+                      console.log('bookingCancelledBookings: ', bookingCancelledBookings);
+                      bookingEvent.save();
                     }
                   });
                 } else {
@@ -132,7 +130,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
               }
             },
             error: function(error) {
-           //   response.error('Booking Event Error:', error);
+              response.error('Booking Event Error:', error);
                     console.log("Booking Event Error");
             }
           });
