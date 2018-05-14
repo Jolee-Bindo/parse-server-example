@@ -152,6 +152,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
 });
 
 function cancellBookingTicket(bookingTicket, businessName, callback){
+        console.log('here!');
     bookingTicket.set("bookingTicketStatus", "cancelledByBusiness");
     var CancelledBooking = Parse.Object.extend("CancelledBooking");
     var cancelledBooking = new CancelledBooking();
