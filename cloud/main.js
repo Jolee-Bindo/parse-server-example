@@ -256,9 +256,11 @@ Parse.Cloud.define('reactivateSchedule', function(request, response) {
 });
 
 Parse.Cloud.afterSave("CancelledBooking", function(request) {
+  var bookingTicket;
   const ticketQuery = new Parse.Query("BookingTicket");
   ticketQuery.get(request.object.get("cancelledBookingTicket").id)
   .then(function(cancelledBookingTicket) {
+    bookingTicket = cancelledBookingTicket;
     const dayQuery = new Parse.Query("BookingDay");
     dayQuery.equalTo("bookingTickets", cancelledBookingTicket);
     return dayQuery.first();
@@ -278,10 +280,13 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
     bookingEvent.set("bookingCancelledBookings", bookingEvent.get("bookingCancelledBookings") + 1);
     return bookingEvent.save();
   }).then(function(bookingEvent){
+    const businessQuery = new Parse.Query("Business");
+    return businessQuery.get(request.object.get("cancelledBookingBusiness").id);
+  }).then(function(cancelledBookingBusiness) {
     /// send cancellation notification to user
-    var bookingDate = cancelledBookingTicket.get("bookingTicketDate");              
-    var bookingStartTime = cancelledBookingTicket.get("bookingTicketStartTime");
-    var bookingFinishTime = cancelledBookingTicket.get("bookingTicketFinishTime");
+    var bookingDate = bookingTicket.get("bookingTicketDate");              
+    var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
+    var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
     
     var clientId;
     if (request.object.get("cancelledBookingClient") != null) {
@@ -290,17 +295,14 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
     } else if (request.object.get("cancelledBookingGuestClient") != null) {
       clientId = request.object.get("cancelledBookingGuestClient").id;
     }
-    const businessQuery = new Parse.Query("Business");
-    return businessQuery.get(request.object.get("cancelledBookingBusiness").id);
-  }).then(function(cancelledBookingBusiness) {
       var businessName = cancelledBookingBusiness.get("businessName");
       sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
         function (errorMessage, result) {
           if (errorMessage)
-          callback('error', error.message);
+          callback('error', errorMessage);
         });
   }, function(error) {
-    console.log('Error:', error.errorMessage);
+        console.error("Got an error " + error.code + " : " + error.message);
   });
 });
 
