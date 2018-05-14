@@ -160,6 +160,7 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
           success: function(bookingTicket) {          
                   console.log('bookingTicket:', bookingTicket.get("bookingTicketDate"));
                   /// update booking day according to cancellation
+                  /*
                   bookingDay.set("numberOfReservedBookingsPerDay", bookingDay.get("numberOfReservedBookingsPerDay") - 1);
                   bookingDay.set("numberOfAvailableBookingsPerDay", bookingDay.get("numberOfAvailableBookingsPerDay") + 1);
                   bookingDay.save();
@@ -177,6 +178,7 @@ function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, business
                                    callback('error', error.message);
                           }
                   });
+                  */
             },
             error: function(bookingTicket, error) {
               // error is a Parse.Error with an error code and message.
