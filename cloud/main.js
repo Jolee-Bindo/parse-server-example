@@ -302,7 +302,7 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
   }, function(error) {
     console.log('Error:', error.errorMessage);
   });
-} 
+});
 
 
 /*
