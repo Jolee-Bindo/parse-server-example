@@ -113,7 +113,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
                       var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings") + 1;
                       bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings);
                       var bookingCancelledBookings = bookingEvent.get("bookingCancelledBookings") + 1;
-//                      bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
+                      bookingEvent.set("bookingCancelledBookings", bookingCancelledBookings);
+                      console.log('bookingCancelledBookings', bookingCancelledBookings);
                     }
                   });
                 } else {
@@ -206,7 +207,6 @@ function sendNotification2(userId, businessName, bookingDate, bookingStartTime, 
   message = message + new Intl.DateTimeFormat("en-US", dateOptions).format(bookingDate) + "\n";  
   var timeOptions = { hour: "2-digit", minute: "2-digit"};
   message = message + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingStartTime) + " to " + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingFinishTime);
-  console.log(message);
   
   var queryUser = new Parse.Query(Parse.User);
   queryUser.equalTo('objectId', userId);
