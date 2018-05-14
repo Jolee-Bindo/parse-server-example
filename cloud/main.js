@@ -188,12 +188,14 @@ function cancellBookingTicket(bookingTicket, businessName, callback){
             var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
             var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
             
+            callback(null, 'Success');
+
             sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
               function (errorMessage, result) {
                 if (errorMessage)
                    callback('error', error.message);
-                else 
-                   callback(null, 'Success');
+             //   else 
+             //      callback(null, 'Success');
               });
             },
             error: function(bookingTicket, error) {
