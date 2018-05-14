@@ -72,7 +72,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
   var bookingDayId = request.params.bookingDayId;
   var bookingEventId = request.params.bookingEventId;
   var businessName = request.params.businessName;
-  console.log(request.params);
+
   var BookingDay = Parse.Object.extend("BookingDay");
   var query = new Parse.Query(BookingDay);
   query.equalTo('objectId', bookingDayId);
@@ -93,26 +93,24 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
               var bookingTicket = bookingTickets[i];
               bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
               var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
-              if (bookingTicketStatus == "bookedByBusiness" ||bookingTicketStatus == "bookedByClient") {
+              if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {
                 cancellBookingTicket(bookingTicket, businessName, 
                   function (errorMessage, result) {
                     if (errorMessage) {
                     //  response.error(result);
                       console.log("Error here");
                     } else {
-                      console.log('success cancel booking ticket');
                       /// update booking day according to cancellation
                       bookingDay.set("numberOfReservedBookingsPerDay", numberOfReservedBookingsPerDay - 1);
                       var numberOfAvailableBookingsPerDay = bookingDay.get("numberOfAvailableBookingsPerDay");
                       bookingDay.set("numberOfAvailableBookingsPerDay", numberOfAvailableBookingsPerDay + 1);
-                      console.log('numberOfReservedBookingsPerDay: ', numberOfReservedBookingsPerDay);
-                      console.log('numberOfAvailableBookingsPerDay: ', numberOfAvailableBookingsPerDay);
                       bookingDay.save();
 
                       /// update booking event according to cancellation 
-                      var bookingReservedBookings  = bookingEvent.get("bookingReservedBookings");
+                      var bookingReservedBookings = bookingEvent.get("bookingReservedBookings");
                       bookingEvent.set("bookingReservedBookings", bookingReservedBookings - 1);
                       console.log('bookingReservedBookings: ', bookingReservedBookings);
+                            
                       var bookingAvailableBookings = bookingEvent.get("bookingAvailableBookings");
                       bookingEvent.set("bookingAvailableBookings", bookingAvailableBookings + 1);
                       console.log('bookingAvailableBookings: ', bookingAvailableBookings);
@@ -152,7 +150,6 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
 });
 
 function cancellBookingTicket(bookingTicket, businessName, callback){
-        console.log('here!');
     bookingTicket.set("bookingTicketStatus", "cancelledByBusiness");
     var CancelledBooking = Parse.Object.extend("CancelledBooking");
     var cancelledBooking = new CancelledBooking();
