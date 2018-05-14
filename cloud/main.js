@@ -342,16 +342,19 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
           var client;
           if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
                   client = cancelledBookingTicket.get("client");
+                  clientId = client.id;
                             console.log('client:', client);
 
           } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
                   client = cancelledBookingTicket.get("guestClient");
+                                    clientId = client.id;
+
                             console.log('client:', client);
 
           }
           
           const businessQuery = new Parse.Query("Business");
-          console.log('client id:', client.id);
+          console.log('client id:', clientId);
           businessQuery.get(request.object.get("cancelledBookingBusiness").id)
                  .then(function(cancelledBookingBusiness) {
                   var businessName = cancelledBookingBusiness.get("businessName");
