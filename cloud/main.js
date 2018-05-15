@@ -73,9 +73,10 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
   query.equalTo("objectId", request.params.bookingDayId);
   query.include("bookingTickets");
   return query.first().then(function(bookingDay) {
+          console.log('booking day: ', bookingDay);
     var bookingTickets = bookingDay.get("bookingTickets");   
     var promise = Parse.Promise.as();
-             console.log('all:',bookingTicket);
+             console.log('all:',bookingTickets);
 
     _.each(bookingTickets, function(bookingTicket) {
       // For each item, extend the promise with a function to cancel it.
