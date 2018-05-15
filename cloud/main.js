@@ -89,11 +89,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
 });         
 
 function cancellBookingTicket(bookingTicket) {
-             console.log('Ticket to cancel:',bookingTicket);
-
   var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
   if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {    
-          console.log('here');
     var CancelledBooking = Parse.Object.extend("CancelledBooking");
     var cancelledBooking = new CancelledBooking();
     cancelledBooking.set("cancellationStatus", 'cancelledByBusiness');
@@ -116,189 +113,16 @@ function cancellBookingTicket(bookingTicket) {
       bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
       return bookingTicket.save();
     }).then(function(bookingTicket) {
-      return 'Success';
+      return;
     });
   } else {
     bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
     bookingTicket.save().then(function(bookingTicket) {
-      return 'Success';
+      return;
     });
   }
 }   
-/*
-Parse.Cloud.define('deactivateSchedule', function(request, response) {
-  var bookingDayId = request.params.bookingDayId;
-  var bookingEventId = request.params.bookingEventId;
-  var businessName = request.params.businessName;
-  
-  var BookingDay = Parse.Object.extend("BookingDay");
-  var query = new Parse.Query(BookingDay);
-  query.equalTo('objectId', bookingDayId);
-  query.include("bookingTickets");
-  query.first({
-    success: function(bookingDay) {
-      // Successfully retrieved booking day.
-      var bookingTickets = bookingDay.get("bookingTickets");                      
-      var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
-      
-      if(numberOfReservedBookingsPerDay > 0) {
-        var BookingEvent = Parse.Object.extend("BookingEvent");
-        var eventQuery = new Parse.Query(BookingEvent);
-        eventQuery.equalTo('objectId', bookingEventId);
-        eventQuery.first({
-          success: function(bookingEvent) {
-            for (var i = 0; i < bookingTickets.length; i++) {
-              var bookingTicket = bookingTickets[i];
-              bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
-              var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
-              if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {
-                cancellBookingTicket(bookingTicket, bookingDay, bookingEvent, businessName, 
-                  function (errorMessage, result) {
-                    if (errorMessage) {
-                      //  response.error(result);
-                      console.log("Error here");
-                    }
-                  });
-                } else {
-                  bookingTicket.save();
-                }                
-              }
-            },
-            error: function(error) {
-              response.error('Booking Event Error:', error);
-              console.log("Booking Event Error");
-            }
-          });
-        } else {
-          for (var i = 0; i < bookingTickets.length; i++) {
-            var bookingTicket = bookingTickets[i];
-            bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
-            bookingTicket.save();
-          }
-        }
-        bookingDay.set("bookingEventStatus", "bookingEventStatusDeactivated");
-        bookingDay.save();
-        
-        response.success("successfully deactivated BookingDay");
-      },
-      error: function(error) {
-        response.error('Error in deactivation booking day:', error);
-      }
-    });
-  });
-*/
 
-/*
-Parse.Cloud.define('deactivateSchedule', function(request, response) {
-  var bookingDayId = request.params.bookingDayId;
-  var bookingEventId = request.params.bookingEventId;
-  var businessName = request.params.businessName;
-  
-  const query = new Parse.Query("BookingDay");
-  query.equalTo("objectId", request.params.bookingDayId);
-  query.include("bookingTickets");
-  return eventQuery.first().then(function(bookingDay) {
-  })
-
-  var BookingDay = Parse.Object.extend("BookingDay");
-  var query = new Parse.Query(BookingDay);
-  query.equalTo('objectId', bookingDayId);
-  query.include("bookingTickets");
-  query.first({
-    success: function(bookingDay) {
-      // Successfully retrieved booking day.
-      var bookingTickets = bookingDay.get("bookingTickets");                      
-      var numberOfReservedBookingsPerDay = bookingDay.get("numberOfReservedBookingsPerDay");
-      
-      if(numberOfReservedBookingsPerDay > 0) {
-        var BookingEvent = Parse.Object.extend("BookingEvent");
-        var eventQuery = new Parse.Query(BookingEvent);
-        eventQuery.equalTo('objectId', bookingEventId);
-        eventQuery.first({
-          success: function(bookingEvent) {
-            for (var i = 0; i < bookingTickets.length; i++) {
-              var bookingTicket = bookingTickets[i];
-              bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
-              var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
-              if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {
-                cancellBookingTicket(bookingTicket, bookingDay, bookingEvent, businessName, 
-                  function (errorMessage, result) {
-                    if (errorMessage) {
-                      //  response.error(result);
-                      console.log("Error here");
-                    }
-                  });
-                } else {
-                  bookingTicket.save();
-                }                
-              }
-            },
-            error: function(error) {
-              response.error('Booking Event Error:', error);
-              console.log("Booking Event Error");
-            }
-          });
-        } else {
-          for (var i = 0; i < bookingTickets.length; i++) {
-            var bookingTicket = bookingTickets[i];
-            bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
-            bookingTicket.save();
-          }
-        }
-        bookingDay.set("bookingEventStatus", "bookingEventStatusDeactivated");
-        bookingDay.save();
-        
-        response.success("successfully deactivated BookingDay");
-      },
-      error: function(error) {
-        response.error('Error in deactivation booking day:', error);
-      }
-    });
-  });
-*/
-
-/*
-function cancellBookingTicket(bookingTicket,  bookingDay, bookingEvent, businessName, callback) {
-    var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
-    if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {
-
-    bookingTicket.set("bookingTicketStatus", "cancelledByBusiness");
-    var CancelledBooking = Parse.Object.extend("CancelledBooking");
-    var cancelledBooking = new CancelledBooking();
-    cancelledBooking.set("cancellationStatus", 'cancelledByBusiness');
-    cancelledBooking.set("cancelledBookingTicket", bookingTicket);
-    var business = bookingTicket.get("Business");
-    cancelledBooking.set("cancelledBookingBusiness", business);
-    cancelledBooking.set("cancellationDate", new Date());
-    
-    var bookingTicketClientStatus = bookingTicket.get("bookingTicketclientStatus");
-    var clientId;
-    if (bookingTicketClientStatus == "bookingTicketclientRegistered") {
-      var client = bookingTicket.get("client");
-      clientId = client.id;
-      cancelledBooking.set("cancelledBookingClient", client);
-      bookingTicket.set("client", null);
-    } else if (bookingTicketClientStatus == "bookingTicketclientGuest") {
-      var client = bookingTicket.get("guestClient");
-      clientId = client.id;
-      cancelledBooking.set("cancelledBookingGuestClient", client);
-      bookingTicket.set("guestClient", null);
-    }
-    
-    cancelledBooking.save(null, {
-      success: function(cancelledBooking) {              
-        bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
-        bookingTicket.save();
-        },
-        error: function(cancelledBooking, error) {
-          // error is a Parse.Error with an error code and message.
-          callback('error', error.message);
-        }
-      });
-    } else {
-    }
-}
-*/
 function sendNotification2(userId, businessName, bookingDate, bookingStartTime, bookingFinishTime, callback) {
   var message = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
   var dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric"};  
@@ -340,10 +164,8 @@ Parse.Cloud.define('reactivateSchedule', function(request, response) {
   query.equalTo('objectId', bookingDayId);
   query.include('bookingTickets');
   query.first({
-    success: function(object) {
+    success: function(bookingDay) {
       // Successfully retrieved the object.
-      var bookingDay = object;
-
       var bookingTickets = bookingDay.get("bookingTickets");
       for (var i = 0; i < bookingTickets.length; i++) {
         var bookingTicket = bookingTickets[i];
@@ -397,7 +219,6 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
     var clientId;
     if (request.object.get("cancelledBookingClient") != null) {
       clientId = request.object.get("cancelledBookingClient").id;
-      
     } else if (request.object.get("cancelledBookingGuestClient") != null) {
       clientId = request.object.get("cancelledBookingGuestClient").id;
     }
@@ -411,62 +232,3 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
         console.error("Got an error " + error.code + " : " + error.message);
   });
 });
-
-
-/*
-Parse.Cloud.afterSave("CancelledBooking", function(request) {
-  const ticketQuery = new Parse.Query("BookingTicket");
-  ticketQuery.get(request.object.get("cancelledBookingTicket").id)
-  .then(function(cancelledBookingTicket) {
-          /// update booking day according to cancellation
-                  bookingDay.set("numberOfReservedBookingsPerDay", bookingDay.get("numberOfReservedBookingsPerDay") - 1);
-                  bookingDay.set("numberOfAvailableBookingsPerDay", bookingDay.get("numberOfAvailableBookingsPerDay") + 1);
-                  bookingDay.save();
-
-                  /// update booking event according to cancellation 
-                  bookingEvent.set("bookingReservedBookings", bookingEvent.get("bookingReservedBookings") - 1);
-                  bookingEvent.set("bookingAvailableBookings", bookingEvent.get("bookingAvailableBookings") + 1);
-                  bookingEvent.set("bookingCancelledBookings", bookingEvent.get("bookingCancelledBookings") + 1);
-                  bookingEvent.save(null, {
-                          success: function(bookingEvent) {
-                                  console.log('Cancelled Bookings: ', bookingEvent.get("bookingCancelledBookings"));
-                                   callback(null, 'Success');
-                          },
-                          error: function(bookingEvent, error) {
-                                   callback('error', error.message);
-                          }
-                  });
-
-          
-    /// send cancellation notification to user
-    var bookingDate = cancelledBookingTicket.get("bookingTicketDate");              
-    var bookingStartTime = cancelledBookingTicket.get("bookingTicketStartTime");
-    var bookingFinishTime = cancelledBookingTicket.get("bookingTicketFinishTime");
-    
-    var clientId;
-    if (request.object.get("cancelledBookingClient") != null) {
-      clientId = request.object.get("cancelledBookingClient").id;
-      
-    } else if (request.object.get("cancelledBookingGuestClient") != null) {
-      clientId = request.object.get("cancelledBookingGuestClient").id;
-    }
-    
-    const businessQuery = new Parse.Query("Business");
-    businessQuery.get(request.object.get("cancelledBookingBusiness").id)
-    .then(function(cancelledBookingBusiness) {
-      var businessName = cancelledBookingBusiness.get("businessName");
-      sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
-        function (errorMessage, result) {
-          if (errorMessage)
-          callback('error', error.message);
-        });
-    })
-    .catch(function(error) {
-        console.error("Got an error " + error.code + " : " + error.message);
-    });
-  })
-  .catch(function(error) {
-    console.error("Got an error " + error.code + " : " + error.message);
-  });
-});
-*/
