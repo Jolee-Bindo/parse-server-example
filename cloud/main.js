@@ -118,12 +118,12 @@ function cancellBookingTicket(bookingTicket) {
       bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
       return bookingTicket.save();
     }).then(function(bookingTicket) {
-      return;
+      return 'Success';
     });
   } else {
     bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
     bookingTicket.save().then(function(bookingTicket) {
-      return;
+      return 'Success';
     });
   }
 }   
