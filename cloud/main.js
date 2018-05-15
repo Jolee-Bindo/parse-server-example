@@ -79,7 +79,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
       var bookingTickets = bookingDay.get("bookingTickets");
       // Create a trivial resolved promise as a base case.
       var promise = Parse.Promise.as();
-      for (var bookingTicket in bookingTickets) {
+      for (var i = 0; i < bookingTickets.length; i++) {
+         var bookingTicket = bookingTickets[i];
         // For each item, extend the promise with a function to delete it.
         promise = promise.then(function() {
           // Return a promise that will be resolved when the delete is finished.
