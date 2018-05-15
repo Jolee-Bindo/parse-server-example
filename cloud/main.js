@@ -167,13 +167,13 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
     bookingDay.set("numberOfAvailableBookingsPerDay", bookingDay.get("numberOfAvailableBookingsPerDay") + 1);
     console.log('numberOfReservedBookingsPerDay', bookingDay.get("numberOfReservedBookingsPerDay"));
     console.log('numberOfAvailableBookingsPerDay', bookingDay.get("numberOfAvailableBookingsPerDay"));
-    bookingDay.save();
-
+    return bookingDay.save();
+  }).then(function(bookingDay) {
     const eventQuery = new Parse.Query("BookingEvent");
     eventQuery.equalTo("bookingDays", bookingDay);
     return eventQuery.first();
   }).then(function(bookingEvent){
-    /// update booking event according to cancellation 
+    /// update booking event according to cancellation
     bookingEvent.set("bookingReservedBookings", bookingEvent.get("bookingReservedBookings") - 1);
     bookingEvent.set("bookingAvailableBookings", bookingEvent.get("bookingAvailableBookings") + 1);
     bookingEvent.set("bookingCancelledBookings", bookingEvent.get("bookingCancelledBookings") + 1);
@@ -186,7 +186,7 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
     return businessQuery.get(request.object.get("cancelledBookingBusiness").id);
   }).then(function(cancelledBookingBusiness) {
     /// send cancellation notification to user
-    var bookingDate = bookingTicket.get("bookingTicketDate");              
+    var bookingDate = bookingTicket.get("bookingTicketDate");
     var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
     var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
     
@@ -196,16 +196,16 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
     } else if (request.object.get("cancelledBookingGuestClient") != null) {
       clientId = request.object.get("cancelledBookingGuestClient").id;
     }
-      var businessName = cancelledBookingBusiness.get("businessName");
-      sendPushNotification(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
-        function (errorMessage, result) {
-          if (errorMessage)
-          callback('error', errorMessage);
-        });
-  }, function(error) {
-        console.error("Got an error " + error.code + " : " + error.message);
+    var businessName = cancelledBookingBusiness.get("businessName");
+    sendPushNotification(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
+      function (errorMessage, result) {
+        if (errorMessage)
+        callback('error', errorMessage);
+      });
+    }, function(error) {
+      console.error("Got an error " + error.code + " : " + error.message);
+    });
   });
-});
 
 function sendPushNotification(userId, businessName, bookingDate, bookingStartTime, bookingFinishTime, callback) {
   var message = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
