@@ -166,7 +166,8 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
   var dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric"};  
   message = message + new Intl.DateTimeFormat("en-US", dateOptions).format(bookingDate) + "\n";  
   var timeOptions = { hour: "2-digit", minute: "2-digit"};
-  message = message + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingStartTime) + " to " + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingFinishTime);
+ // message = message + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingStartTime) + " to " + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingFinishTime);
+  message = message + bookingStartTime.toLocaleTimeString('en-US', timeOptions) + " to " + bookingFinishTime.toLocaleTimeString('en-US', timeOptions);
   var queryUser = new Parse.Query(Parse.User);
   queryUser.equalTo('objectId', userId);
   var query = new Parse.Query(Parse.Installation);
