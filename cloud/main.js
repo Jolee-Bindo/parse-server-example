@@ -75,6 +75,8 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
   return query.first().then(function(bookingDay) {
     var bookingTickets = bookingDay.get("bookingTickets");   
     for (var bookingTicket in bookingTickets) {
+                         console.log('Ticket:',bookingTicket);
+
       cancellBookingTicket(bookingTicket);
     }
     response.success('successfully deactivated BookingDay:', bookingDay.id);
@@ -84,7 +86,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
 });         
 
 function cancellBookingTicket(bookingTicket) {
-             console.log(bookingTicket);
+             console.log('Ticket to cancel:',bookingTicket);
 
   var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
   if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {    
