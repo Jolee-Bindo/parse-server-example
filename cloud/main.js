@@ -81,9 +81,10 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
       var promise = Parse.Promise.as();
       _.each(bookingTickets, function(bookingTicket) {
     // For each item, extend the promise with a function to delete it.
-    promise = promise.then(function() {
+                    console.log('booking ticket:', bookingTicket);
+
+    promise = promise.then(function(bookingTicket) {
       // Return a promise that will be resolved when the delete is finished.
-      console.log('booking ticket:', bookingTicket);
       return cancellBookingTicket(bookingTicket);
     });
   });
