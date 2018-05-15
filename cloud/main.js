@@ -73,27 +73,15 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
   query.equalTo("objectId", request.params.bookingDayId);
   query.include("bookingTickets");
   return query.first().then(function(bookingDay) {
-          console.log('booking day: ', bookingDay);
     var bookingTickets = bookingDay.get("bookingTickets");   
-    var promise = Parse.Promise.as();
-             console.log('all:',bookingTickets);
-
-    _.each(bookingTickets, function(bookingTicket) {
-      // For each item, extend the promise with a function to cancel it.
-       console.log(bookingTicket);
-
-  //    promise = promise.then(function() {
-        // Return a promise that will be resolved when the task is finished.
-
- //       return cancellBookingTicket(bookingTicket);
- //     });
-    });
- //   return promise;
-  }).then(function() {
-    // Every booking ticket was cancelled.
-          console.log('done!');
+    for (var bookingTicket in bookingTickets) {
+      cancellBookingTicket(bookingTicket);
+    }
+    response.success('successfully deactivated BookingDay:', bookingDay.id);
+  }, function(error) {
+    console.log('Error in deactivating schedule');
   });
-});            
+});         
 
 function cancellBookingTicket(bookingTicket) {
              console.log(bookingTicket);
