@@ -141,8 +141,8 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
   }).then(function(cancelledBookingBusiness) {
     /// send cancellation notification to user
     var bookingDate = bookingTicket.get("bookingTicketDate");
-    var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
-    var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
+    var bookingStartTime = new Date(Date.UTC(bookingTicket.get("bookingTicketStartTime")));
+    var bookingFinishTime = new Date(Date.UTC(bookingTicket.get("bookingTicketFinishTime")));
     
     var clientId;
     if (request.object.get("cancelledBookingClient") != null) {
