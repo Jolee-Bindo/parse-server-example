@@ -79,13 +79,14 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
       for (var i = 0; i < bookingTickets.length; i++) {
         var bookingTicket = bookingTickets[i];
         cancellBookingTicket(bookingTicket);
+      }
+      response.success('successfully deactivated BookingDay:', bookingDay.id);
+    }, 
+    error: function(error) {
+      console.log('Error in deactivating schedule');
     }
-    response.success('successfully deactivated BookingDay:', bookingDay.id);
-  }, 
-  error: function(error) {
-    console.log('Error in deactivating schedule');
   });
-});            
+});         
 
 function cancellBookingTicket(bookingTicket) {
              console.log('Ticket to cancel:',bookingTicket);
