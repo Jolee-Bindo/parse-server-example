@@ -123,38 +123,6 @@ function cancellBookingTicket(bookingTicket) {
     });
   }
 }   
-
-function sendPushNotification(userId, businessName, bookingDate, bookingStartTime, bookingFinishTime, callback) {
-  var message = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
-  var dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric"};  
-  message = message + new Intl.DateTimeFormat("en-US", dateOptions).format(bookingDate) + "\n";  
-  var timeOptions = { hour: "2-digit", minute: "2-digit"};
-  message = message + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingStartTime) + " to " + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingFinishTime);
-  console.log('message: ', message);
-  var queryUser = new Parse.Query(Parse.User);
-  queryUser.equalTo('objectId', userId);
-  var query = new Parse.Query(Parse.Installation);
-  query.matchesQuery('user', queryUser);
-
-  Parse.Push.send({
-    where: query,
-    data: {
-      alert: message,
-      badge: 1,
-      sound: 'default'
-    }
-  }, {
-    useMasterKey: true,
-    success: function() {
-      console.log('##### PUSH OK');
-      callback(null, 'Success');
-    },
-    error: function(error) {
-      console.log('##### PUSH ERROR');
-      callback('error', error.message);
-    }
-  });
-}
         
 Parse.Cloud.define('reactivateSchedule', function(request, response) {
   var bookingDayId = request.params.bookingDayId;
@@ -197,6 +165,8 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
     /// update booking day according to cancellation
     bookingDay.set("numberOfReservedBookingsPerDay", bookingDay.get("numberOfReservedBookingsPerDay") - 1);
     bookingDay.set("numberOfAvailableBookingsPerDay", bookingDay.get("numberOfAvailableBookingsPerDay") + 1);
+    console.log('numberOfReservedBookingsPerDay', bookingDay.get("numberOfReservedBookingsPerDay"));
+    console.log('numberOfAvailableBookingsPerDay', bookingDay.get("numberOfAvailableBookingsPerDay"));
     bookingDay.save();
 
     const eventQuery = new Parse.Query("BookingEvent");
@@ -207,6 +177,9 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
     bookingEvent.set("bookingReservedBookings", bookingEvent.get("bookingReservedBookings") - 1);
     bookingEvent.set("bookingAvailableBookings", bookingEvent.get("bookingAvailableBookings") + 1);
     bookingEvent.set("bookingCancelledBookings", bookingEvent.get("bookingCancelledBookings") + 1);
+    console.log('bookingReservedBookings', bookingEvent.get("bookingReservedBookings"));
+    console.log('bookingAvailableBookings', bookingEvent.get("bookingAvailableBookings"));
+    console.log('bookingCancelledBookings', bookingEvent.get("bookingCancelledBookings"));
     return bookingEvent.save();
   }).then(function(bookingEvent){
     const businessQuery = new Parse.Query("Business");
@@ -233,3 +206,35 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
         console.error("Got an error " + error.code + " : " + error.message);
   });
 });
+
+function sendPushNotification(userId, businessName, bookingDate, bookingStartTime, bookingFinishTime, callback) {
+  var message = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
+  var dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric"};  
+  message = message + new Intl.DateTimeFormat("en-US", dateOptions).format(bookingDate) + "\n";  
+  var timeOptions = { hour: "2-digit", minute: "2-digit"};
+  message = message + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingStartTime) + " to " + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingFinishTime);
+  console.log('message: ', message);
+  var queryUser = new Parse.Query(Parse.User);
+  queryUser.equalTo('objectId', userId);
+  var query = new Parse.Query(Parse.Installation);
+  query.matchesQuery('user', queryUser);
+
+  Parse.Push.send({
+    where: query,
+    data: {
+      alert: message,
+      badge: 1,
+      sound: 'default'
+    }
+  }, {
+    useMasterKey: true,
+    success: function() {
+      console.log('##### PUSH OK');
+      callback(null, 'Success');
+    },
+    error: function(error) {
+      console.log('##### PUSH ERROR');
+      callback('error', error.message);
+    }
+  });
+}
