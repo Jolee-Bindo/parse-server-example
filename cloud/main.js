@@ -29,6 +29,7 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
         });
 });
 */
+/*
 Parse.Cloud.define('sendPushNotification', function(request, response) {
   var userId = request.params.userId;
   var message = request.params.message;
@@ -67,7 +68,7 @@ function sendNotification(userId, message, callback) {
     }
   });
 }
-
+*/
 Parse.Cloud.define('deactivateSchedule', function(request, response) {
   var query = new Parse.Query("BookingDay");
   query.equalTo('objectId', request.params.bookingDayId);
@@ -123,7 +124,7 @@ function cancellBookingTicket(bookingTicket) {
   }
 }   
 
-function sendNotification2(userId, businessName, bookingDate, bookingStartTime, bookingFinishTime, callback) {
+function sendPushNotification(userId, businessName, bookingDate, bookingStartTime, bookingFinishTime, callback) {
   var message = "Reservation Cancelled\n" + businessName + " cancelled your following reservation\n";
   var dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric"};  
   message = message + new Intl.DateTimeFormat("en-US", dateOptions).format(bookingDate) + "\n";  
@@ -223,7 +224,7 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
       clientId = request.object.get("cancelledBookingGuestClient").id;
     }
       var businessName = cancelledBookingBusiness.get("businessName");
-      sendNotification2(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
+      sendPushNotification(clientId, businessName, bookingDate, bookingStartTime, bookingFinishTime,
         function (errorMessage, result) {
           if (errorMessage)
           callback('error', errorMessage);
