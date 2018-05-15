@@ -69,21 +69,23 @@ function sendNotification(userId, message, callback) {
 }
 
 Parse.Cloud.define('deactivateSchedule', function(request, response) {
-  const query = new Parse.Query("BookingDay");
-  query.equalTo("objectId", request.params.bookingDayId);
+  var query = new Parse.Query("BookingDay");
+  query.equalTo('objectId', request.params.bookingDayId);
   query.include("bookingTickets");
-  return query.first().then(function(bookingDay) {
-    var bookingTickets = bookingDay.get("bookingTickets");   
-    for (var bookingTicket in bookingTickets) {
-                         console.log('Ticket:',bookingTicket);
-
-      cancellBookingTicket(bookingTicket);
+  query.first({
+    success: function(bookingDay) {
+      // Successfully retrieved booking day.
+      var bookingTickets = bookingDay.get("bookingTickets");
+      for (var i = 0; i < bookingTickets.length; i++) {
+        var bookingTicket = bookingTickets[i];
+        cancellBookingTicket(bookingTicket);
     }
     response.success('successfully deactivated BookingDay:', bookingDay.id);
-  }, function(error) {
+  }, 
+  error: function(error) {
     console.log('Error in deactivating schedule');
   });
-});         
+});            
 
 function cancellBookingTicket(bookingTicket) {
              console.log('Ticket to cancel:',bookingTicket);
