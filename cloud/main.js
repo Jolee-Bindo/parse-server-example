@@ -29,46 +29,6 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
         });
 });
 */
-/*
-Parse.Cloud.define('sendPushNotification', function(request, response) {
-  var userId = request.params.userId;
-  var message = request.params.message;
-  
-  sendNotification(userId, message,
-  function (errorMessage, result) {
-    if (errorMessage)
-      response.error(result);
-    else 
-      response.success();
-  });
-});
-
-function sendNotification(userId, message, callback) {
-  var queryUser = new Parse.Query(Parse.User);
-  queryUser.equalTo('objectId', userId);
-  var query = new Parse.Query(Parse.Installation);
-  query.matchesQuery('user', queryUser);
-
-  Parse.Push.send({
-    where: query,
-    data: {
-      alert: message,
-      badge: 1,
-      sound: 'default'
-    }
-  }, {
-    useMasterKey: true,
-    success: function() {
-      console.log('##### PUSH OK');
-      callback(null, 'Success');
-    },
-    error: function(error) {
-      console.log('##### PUSH ERROR');
-      callback('error', error.message);
-    }
-  });
-}
-*/
 Parse.Cloud.define('deactivateSchedule', function(request, response) {
   var query = new Parse.Query("BookingDay");
   query.equalTo('objectId', request.params.bookingDayId);
@@ -207,7 +167,6 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
   message = message + new Intl.DateTimeFormat("en-US", dateOptions).format(bookingDate) + "\n";  
   var timeOptions = { hour: "2-digit", minute: "2-digit"};
   message = message + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingStartTime) + " to " + new Intl.DateTimeFormat("en-US", timeOptions).format(bookingFinishTime);
-  console.log('message: ', message);
   var queryUser = new Parse.Query(Parse.User);
   queryUser.equalTo('objectId', userId);
   var query = new Parse.Query(Parse.Installation);
