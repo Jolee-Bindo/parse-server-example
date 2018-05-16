@@ -29,6 +29,21 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
         });
 });
 */
+
+Parse.Cloud.define('cancelReservation', function(request, response) {
+  var bookingTicketId = request.params.bookingTicketId;
+  var cancellationStatus = request.params.cancellationStatus;
+  
+  const query = new Parse.Query("BookingTicket");
+  query.get(request.object.get(request.params.bookingTicketId)
+  .then(function(bookingTicket) {
+    var bookingEventStatus = "bookingEventStatusActive";
+    cancelBookingTicket(bookingTicket, cancellationStatus, bookingEventStatus);
+  }, function(error) {
+    console.log('Error', error);
+  });
+});
+
 Parse.Cloud.define('deactivateSchedule', function(request, response) {
   var query = new Parse.Query("BookingDay");
   query.equalTo('objectId', request.params.bookingDayId);
@@ -36,9 +51,13 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
   query.first({
     success: function(bookingDay) {
       var bookingTickets = bookingDay.get("bookingTickets");
+      var cancellationStatus = "cancelledByBusiness";
+      var bookingEventStatus = "bookingEventStatusDeactivated";
+
       for (var i = 0; i < bookingTickets.length; i++) {
         var bookingTicket = bookingTickets[i];
-        cancellBookingTicket(bookingTicket);
+        var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
+        cancelBookingTicket(bookingTicket, cancellationStatus, bookingEventStatus);
       }
       response.success('successfully deactivated BookingDay:', bookingDay.id);
     }, 
@@ -48,12 +67,12 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
   });
 });       
 
-function cancellBookingTicket(bookingTicket) {
+function cancelBookingTicket(bookingTicket, cancellationStatus, bookingEventStatus) {
   var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
   if (bookingTicketStatus == "bookedByBusiness" || bookingTicketStatus == "bookedByClient") {    
     var CancelledBooking = Parse.Object.extend("CancelledBooking");
     var cancelledBooking = new CancelledBooking();
-    cancelledBooking.set("cancellationStatus", 'cancelledByBusiness');
+    cancelledBooking.set("cancellationStatus", cancellationStatus);
     cancelledBooking.set("cancelledBookingTicket", bookingTicket);
     cancelledBooking.set("cancelledBookingBusiness", bookingTicket.get("Business"));
     cancelledBooking.set("cancellationDate", new Date());
@@ -68,15 +87,15 @@ function cancellBookingTicket(bookingTicket) {
     }
     
     cancelledBooking.save().then(function(cancelledBooking) {
-      bookingTicket.set("bookingTicketStatus", "cancelledByBusiness");
+      bookingTicket.set("bookingTicketStatus", cancellationStatus);
       bookingTicket.set("bookingTicketclientStatus", "bookingTicketclientUndefined");
-      bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
+      bookingTicket.set("bookingEventStatus", bookingEventStatus);
       return bookingTicket.save();
     }).then(function(bookingTicket) {
       return;
     });
   } else {
-    bookingTicket.set("bookingEventStatus", "bookingEventStatusDeactivated");
+    bookingTicket.set("bookingEventStatus", bookingEventStatus);
     bookingTicket.save().then(function(bookingTicket) {
       return;
     });
@@ -141,8 +160,8 @@ Parse.Cloud.afterSave("CancelledBooking", function(request) {
   }).then(function(cancelledBookingBusiness) {
     /// send cancellation notification to user
     var bookingDate = bookingTicket.get("bookingTicketDate");
-    var bookingStartTime = new Date(Date.UTC(bookingTicket.get("bookingTicketStartTime")));
-    var bookingFinishTime = new Date(Date.UTC(bookingTicket.get("bookingTicketFinishTime")));
+    var bookingStartTime = bookingTicket.get("bookingTicketStartTime");
+    var bookingFinishTime = bookingTicket.get("bookingTicketFinishTime");
     
     var clientId;
     if (request.object.get("cancelledBookingClient") != null) {
