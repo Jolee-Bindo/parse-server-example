@@ -1,4 +1,3 @@
-
 /*
 Parse.Cloud.define('sendPushNotification', function(request, response) {
         var userId = request.params.userId;
