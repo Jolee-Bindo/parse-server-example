@@ -37,6 +37,8 @@ Parse.Cloud.define('cancelReservation', function(request, response) {
   .then(function(bookingTicket) {
     var bookingEventStatus = "bookingEventStatusActive";
     cancelBookingTicket(bookingTicket, cancellationStatus, bookingEventStatus);
+    response.success('successfully cancel reservation:', bookingTicket.id);
+
   }, function(error) {
     console.log('Error', error);
   });
