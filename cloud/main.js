@@ -30,11 +30,10 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
 */
 
 Parse.Cloud.define('cancelReservation', function(request, response) {
-  var bookingTicketId = request.params.bookingTicketId;
   var cancellationStatus = request.params.cancellationStatus;
   
   const query = new Parse.Query("BookingTicket");
-  query.get(request.object.get(request.params.bookingTicketId))
+  query.get(request.params.bookingTicketId)
   .then(function(bookingTicket) {
     var bookingEventStatus = "bookingEventStatusActive";
     cancelBookingTicket(bookingTicket, cancellationStatus, bookingEventStatus);
