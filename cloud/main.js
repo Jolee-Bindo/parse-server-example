@@ -29,29 +29,32 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
 });
 */
 Parse.Cloud.define('createBookingEvent', function(request, response) {
-  console.log('request: ', request);
-  var BookingEvent = Parse.Object.extend("BookingEvent");
-  var bookingEvent = new BookingEvent();
-  bookingEvent.set("bookingStartDate", request.params.bookingStartDate);
-  bookingEvent.set("bookingFinishDate", request.params.bookingFinishDate);
-  bookingEvent.set("bookingOffDays", request.params.bookingOffDays);
-  bookingEvent.set("bookingStartHour", request.params.bookingStartHour);
-  bookingEvent.set("bookingFinishHour", request.params.bookingFinishHour);
-  bookingEvent.set("bookingStartOffHour", request.params.bookingStartOffHour);
-  bookingEvent.set("bookingFinishOffHour", request.params.bookingFinishOffHour);
-  bookingEvent.set("bookingSessionDuration", request.params.bookingSessionDuration);
-  bookingEvent.set("bookingNumberOfServicesPerSession", request.params.bookingNumberOfServicesPerSession);
-  bookingEvent.set("bookingCancellationPeriod", request.params.bookingCancellationPeriod);
-  bookingEvent.set("bookingCancellationPolicy", request.params.bookingCancellationPolicy);
-  bookingEvent.set("bookingEventStatus", request.params.bookingEventStatus);
-//  bookingEvent.set("business", request.params.business);
-  
-  bookingEvent.save().then(function(bookingEvent) {
+  const query = new Parse.Query("Business");
+  query.get(request.params.businessId).then(function(business) {
+    var BookingEvent = Parse.Object.extend("BookingEvent");
+    var bookingEvent = new BookingEvent();
+    bookingEvent.set("bookingStartDate", request.params.bookingStartDate);
+    bookingEvent.set("bookingFinishDate", request.params.bookingFinishDate);
+    bookingEvent.set("bookingOffDays", request.params.bookingOffDays);
+    bookingEvent.set("bookingStartHour", request.params.bookingStartHour);
+    bookingEvent.set("bookingFinishHour", request.params.bookingFinishHour);
+    bookingEvent.set("bookingStartOffHour", request.params.bookingStartOffHour);
+    bookingEvent.set("bookingFinishOffHour", request.params.bookingFinishOffHour);
+    bookingEvent.set("bookingSessionDuration", request.params.bookingSessionDuration);
+    bookingEvent.set("bookingNumberOfServicesPerSession", request.params.bookingNumberOfServicesPerSession);
+    bookingEvent.set("bookingCancellationPeriod", request.params.bookingCancellationPeriod);
+    bookingEvent.set("bookingCancellationPolicy", request.params.bookingCancellationPolicy);
+    bookingEvent.set("bookingEventStatus", request.params.bookingEventStatus);
+    bookingEvent.set("business", business);
+    return bookingEvent.save();
+  }).then(function(bookingEvent) {
     console.log('----------------bookingEvent:', bookingEvent);
-              response.success(bookingEvent);
-
+    response.success(bookingEvent);
+  }, function(error) {
+    console.error("Got an error " + error.code + " : " + error.message);
   });
 });
+
 
 Parse.Cloud.define('cancelReservation', function(request, response) {
   var cancellationStatus = request.params.cancellationStatus;
@@ -237,7 +240,7 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
     }
   });
 }
-/*
+
 Parse.Cloud.afterSave("BookingEvent", function(request) {
   // Get the schedule start and finish dates at midnight.  
   var scheduleStartDate = request.get("bookingStartDate");
@@ -288,4 +291,4 @@ function createBookingDay(request) {
       return;
     });
 }
-*/
+
