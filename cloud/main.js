@@ -44,11 +44,12 @@ Parse.Cloud.define('createBookingEvent', function(request, response) {
   bookingEvent.set("bookingCancellationPeriod", request.params.bookingCancellationPeriod);
   bookingEvent.set("bookingCancellationPolicy", request.params.bookingCancellationPolicy);
   bookingEvent.set("bookingEventStatus", request.params.bookingEventStatus);
-  bookingEvent.set("business", request.params.business);
+//  bookingEvent.set("business", request.params.business);
   
   bookingEvent.save().then(function(bookingEvent) {
     console.log('----------------bookingEvent:', bookingEvent);
-    return;
+              response.success(bookingEvent);
+
   });
 });
 
