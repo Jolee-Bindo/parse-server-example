@@ -236,7 +236,7 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
     }
   });
 }
-
+/*
 Parse.Cloud.afterSave("BookingEvent", function(request) {
   // Get the schedule start and finish dates at midnight.  
   var scheduleStartDate = request.get("bookingStartDate");
@@ -287,4 +287,4 @@ function createBookingDay(request) {
       return;
     });
 }
-
+*/
