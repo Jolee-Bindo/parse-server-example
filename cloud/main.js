@@ -244,11 +244,11 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
 
 Parse.Cloud.afterSave("BookingEvent", function(request) {
   // Get the schedule start and finish dates at midnight.  
-  var scheduleStartDate = request.get("bookingStartDate");
+  var scheduleStartDate = request.object.get("bookingStartDate");
   var scheduleStartDateAtMidn = new Date(scheduleStartDate.getFullYear(), scheduleStartDate.getMonth(), scheduleStartDate.getDate());  
   console.log('start date: ', scheduleStartDateAtMidn);
   
-  var scheduleFinishDate = request.get("bookingFinishDate");
+  var scheduleFinishDate = request.object.get("bookingFinishDate");
   var scheduleFinishDateAtMidn = new Date(scheduleFinishDate.getFullYear(), scheduleFinishDate.getMonth(), scheduleFinishDate.getDate());  
   console.log('finish date: ', scheduleFinishDateAtMidn);
   
@@ -258,16 +258,16 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
     var weekDay = bookingDate.toLocaleTimeString("en-us", options);
     console.log('Week Day: ', weekDay);
     
-    var offDaysArray = request.get("bookingOffDays").split(",");
+    var offDaysArray = request.object.get("bookingOffDays").split(",");
     console.log('Off days array length: ', offDaysArray.length);
     
     if (offDaysArray.includes(weekDay) == false) {
       console.log('not includes');
-      var bookingStartHour = request.get("bookingStartHour");
-      var bookingFinishHour = request.get("bookingFinishHour");
-      var bookingStartOffHour = request.get("bookingStartOffHour");
-      var bookingFinishOffHour = request.get("bookingFinishOffHour");
-      var bookingSessionDuration = request.get("bookingSessionDuration");
+      var bookingStartHour = request.object.get("bookingStartHour");
+      var bookingFinishHour = request.object.get("bookingFinishHour");
+      var bookingStartOffHour = request.object.get("bookingStartOffHour");
+      var bookingFinishOffHour = request.object.get("bookingFinishOffHour");
+      var bookingSessionDuration = request.object.get("bookingSessionDuration");
       
       var request = {bookingDate:bookingDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
       createBookingDay(request);        
