@@ -300,3 +300,64 @@ function createBookingDay(request, response) {
     response(error, 'Error');
   });
 }
+
+Parse.Cloud.afterSave("BookingDay", function(request) {
+  var bookingTicketDate = request.object.get("bookingDate");
+  var startOffHour = request.object.get("bookingStartOffHour");
+  var finishOffHour = request.object.get("bookingFinishOffHour");
+  var sessionDuration = request.object.get("bookingSessionDuration");
+  var numberOfServicesPerSession = request.object.get("bookingNumberOfServicesPerSession");
+  const query = new Parse.Query("BookingEvent");
+  //query.include("business");
+  query.get(request.bookingEventId).then(function(bookingEvent) {
+    var bookingCancellationPeriod = bookingEvent.get("bookingCancellationPeriod");
+    var cancellationDeadlineDate = new Date(bookingTicketDate);
+    cancellationDeadlineDate.setDate(cancellationDeadlineDate.getDate - bookingCancellationPeriod);
+    
+    var nextSessionTime = new Date(startSessionTime);
+    var sessionTime = new Date(startSessionTime);
+    
+    var sessionTime = new Date(startSessionTime);
+    while (sessionTime.getTime() <= finishWorkingHour.getTime()) {
+      nextSessionTime.setSeconds(nextSessionTime.getSeconds() + sessionDuration);
+      if (sessionTime.getTime() < startOffHour || sessionTime.getTime() >= finishOffHour) {
+        var request = {bookingDayId:request.object.id, businessId:bookingEvent.get("business").id, bookingTicketDate:bookingTicketDate, bookingTicketStartTime:sessionTime, bookingTicketFinishTime:nextSessionTime, bookingTicketCancellationDeadlineDate:cancellationDeadlineDate};
+        for (var index = 0; index < numberOfServicesPerSession; index++) {
+          createBookingTicket(request);
+          console.log('create booking ticket: ', sessionTime);
+        }
+      } 
+      
+      sessionTime = new Date(nextSessionTime);
+    }
+  },
+  function(error){
+    
+  });
+});
+      
+function createBookingTicket(request, response) {
+  const query = new Parse.Query("BookingDay");
+  return query.get(request.bookingDayId).then(function(bookingDay) {
+    const query = new Parse.Query("Business");
+    return query.get(request.businessId);
+  }).then(function(business) {
+    var BookingTicket = Parse.Object.extend("BookingTicket");
+    var bookingTicket = new BookingTicket();
+    bookingTicket.set("business", business);
+    bookingTicket.set("bookingTicketDate", request.bookingTicketDate);
+    bookingTicket.set("bookingTicketStartTime", request.bookingTicketStartTime);
+    bookingTicket.set("bookingTicketFinishTime", request.bookingTicketFinishTime);
+    bookingTicket.set("bookingTicketBusinessRateStatus", "bookingTicketBusinessRateStatusNotRated");
+    bookingTicket.set("bookingTicketStatus", "bookingTicketStatusAvailable");
+    bookingTicket.set("bookingTicketClientStatus", "bookingTicketClientStatusUndefined");
+    bookingTicket.set("bookingTicketCancellationDeadlineDate", request.bookingTicketCancellationDeadlineDate);
+    bookingTicket.set("bookingTicketClientStatus", "bookingTicketClientStatusUndefined");
+    return bookingTicket.save()
+  }).then(function(bookingTicket)) {
+    response(null, 'Success');
+  }, function(error) {
+    response(error, 'Error');
+  });
+}
+
