@@ -282,6 +282,7 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
 });
 
 function createBookingDay(request, response) {
+        console.log('request', request);
   const query = new Parse.Query("BookingEvent");
   query.get(request.bookingEventId).then(function(bookingEvent) {
     var BookingDay = Parse.Object.extend("BookingDay");
