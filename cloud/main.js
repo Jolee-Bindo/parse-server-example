@@ -260,16 +260,12 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
   
   var bookingDate = scheduleStartDateAtMidn;
   var offDaysArray = request.object.get("bookingOffDays").split(",");
-        
-  console.log('Off days array: ', offDaysArray);
-   
+          
   while (bookingDate.getTime() <= scheduleFinishDateAtMidn.getTime()) {    
     var options = {weekday: "long"};  
     var weekDay = bookingDate.toLocaleDateString("en-us", options);
-    console.log('Week Day: ', weekDay);
     
     if (offDaysArray.includes(weekDay) == false) {
-      console.log('not includes');      
       var request = {bookingDate:bookingDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
       createBookingDay(request);        
     }
@@ -282,7 +278,6 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
 function createBookingDay(request) {
   var BookingDay = Parse.Object.extend("BookingDay");
   var bookingDay = new BookingDay();
-        console.log('request+++++++++++++++++++++++++', request);
   bookingDay.set("bookingDate", request.bookingDate);
   bookingDay.set("bookingStartHour", request.bookingStartHour);
   bookingDay.set("bookingFinishHour", request.bookingFinishHour);
@@ -290,7 +285,7 @@ function createBookingDay(request) {
   bookingDay.set("bookingFinishOffHour", request.bookingFinishOffHour);
   bookingDay.set("bookingSessionDuration", request.bookingSessionDuration);
   bookingDay.save().then(function(bookingDay) {
-    console.log('----------------bookingDay:', bookingDay);
+    console.log('----------------------booking date:', bookingDay.get("bookingDate"));      
       return;
     });
 }
