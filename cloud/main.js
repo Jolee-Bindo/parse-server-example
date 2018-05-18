@@ -304,17 +304,19 @@ function createBookingDay(request, response) {
 
 Parse.Cloud.afterSave("BookingDay", function(request) {
   var bookingTicketDate = request.object.get("bookingDate");
+  var startSessionTime = request.object.get("bookingStartHour");
+  var finishWorkingHour = request.object.get("bookingFinishHour");
   var startOffHour = request.object.get("bookingStartOffHour");
   var finishOffHour = request.object.get("bookingFinishOffHour");
   var sessionDuration = request.object.get("bookingSessionDuration");
   var numberOfServicesPerSession = request.object.get("bookingNumberOfServicesPerSession");
   const query = new Parse.Query("BookingEvent");
-  //query.include("business");
+  query.include("business");
   query.get(request.bookingEventId).then(function(bookingEvent) {
     var bookingCancellationPeriod = bookingEvent.get("bookingCancellationPeriod");
     var cancellationDeadlineDate = new Date(bookingTicketDate);
     cancellationDeadlineDate.setDate(cancellationDeadlineDate.getDate - bookingCancellationPeriod);
-    
+    console.log('cancellationDeadlineDate', cancellationDeadlineDate);
     var nextSessionTime = new Date(startSessionTime);
     var sessionTime = new Date(startSessionTime);
     
