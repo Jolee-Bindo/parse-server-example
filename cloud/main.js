@@ -266,7 +266,8 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
     var weekDay = bookingDate.toLocaleDateString("en-us", options);
     
     if (offDaysArray.includes(weekDay) == false) {
-      var request = {bookingDate:bookingDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
+      var bookingDayDate = bookingDate;
+      var request = {bookingDate:bookingDayDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
       createBookingDay(request);        
     }
     bookingDate.setDate(bookingDate.getDate() + 1);
