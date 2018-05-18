@@ -243,7 +243,6 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
 }
 
 Parse.Cloud.afterSave("BookingEvent", function(request) {
-        console.log('request:*******************************', request);
   // Get the schedule start and finish dates at midnight.  
   var scheduleStartDate = request.object.get("bookingStartDate");
   var scheduleStartDateAtMidn = new Date(scheduleStartDate.getFullYear(), scheduleStartDate.getMonth(), scheduleStartDate.getDate());  
@@ -283,7 +282,7 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
 function createBookingDay(request) {
   var BookingDay = Parse.Object.extend("BookingDay");
   var bookingDay = new BookingDay();
-        console.log('request', request);
+        console.log('request+++++++++++++++++++++++++', request);
   bookingDay.set("bookingDate", request.bookingDate);
   bookingDay.set("bookingStartHour", request.bookingStartHour);
   bookingDay.set("bookingFinishHour", request.bookingFinishHour);
