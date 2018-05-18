@@ -28,7 +28,6 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
         });
 });
 */
-
 Parse.Cloud.define('createBookingEvent', function(request, response) {
   console.log('request: ', request);
   var BookingEvent = Parse.Object.extend("BookingEvent");
