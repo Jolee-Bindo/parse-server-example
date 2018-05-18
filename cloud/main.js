@@ -52,6 +52,7 @@ Parse.Cloud.define('createBookingEvent', function(request, response) {
     response.success(bookingEvent);
   }, function(error) {
     console.error("Got an error " + error.code + " : " + error.message);
+    response.error("Got an error " + error.code + " : " + error.message);
   });
 });
 
