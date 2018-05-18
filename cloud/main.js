@@ -267,6 +267,8 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
     
     if (offDaysArray.includes(weekDay) == false) {
       var bookingDayDate = bookingDate;
+      console.log('++++++++++++++++++booking day date:', bookingDayDate);      
+
       var request = {bookingDate:bookingDayDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
       createBookingDay(request);        
     }
