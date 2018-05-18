@@ -243,6 +243,12 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
 }
 
 Parse.Cloud.afterSave("BookingEvent", function(request) {
+        var bookingStartHour = request.object.get("bookingStartHour");
+      var bookingFinishHour = request.object.get("bookingFinishHour");
+      var bookingStartOffHour = request.object.get("bookingStartOffHour");
+      var bookingFinishOffHour = request.object.get("bookingFinishOffHour");
+      var bookingSessionDuration = request.object.get("bookingSessionDuration");
+
   // Get the schedule start and finish dates at midnight.  
   var scheduleStartDate = request.object.get("bookingStartDate");
   var scheduleStartDateAtMidn = new Date(scheduleStartDate.getFullYear(), scheduleStartDate.getMonth(), scheduleStartDate.getDate());  
@@ -254,6 +260,7 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
   
   var bookingDate = scheduleStartDateAtMidn;
   var offDaysArray = request.object.get("bookingOffDays").split(",");
+        
   console.log('Off days array: ', offDaysArray);
    
   while (bookingDate.getTime() <= scheduleFinishDateAtMidn.getTime()) {    
@@ -262,14 +269,7 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
     console.log('Week Day: ', weekDay);
     
     if (offDaysArray.includes(weekDay) == false) {
-      console.log('not includes');
-     
-      var bookingStartHour = request.object.get("bookingStartHour");
-      var bookingFinishHour = request.object.get("bookingFinishHour");
-      var bookingStartOffHour = request.object.get("bookingStartOffHour");
-      var bookingFinishOffHour = request.object.get("bookingFinishOffHour");
-      var bookingSessionDuration = request.object.get("bookingSessionDuration");
-      
+      console.log('not includes');      
       var request = {bookingDate:bookingDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
       createBookingDay(request);        
     }
