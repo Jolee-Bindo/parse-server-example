@@ -266,11 +266,16 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
     var weekDay = bookingDate.toLocaleDateString("en-us", options);
     
     if (offDaysArray.includes(weekDay) == false) {
-      var bookingDayDate = bookingDate;
+      var bookingDayDate = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());
       console.log('++++++++++++++++++booking day date:', bookingDayDate);      
 
       var request = {bookingDate:bookingDayDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
-      createBookingDay(request);        
+      createBookingDay(request, 
+      function (errorMessage, result) {
+        if (errorMessage)
+                
+
+      });
     }
     bookingDate.setDate(bookingDate.getDate() + 1);
   }
@@ -278,7 +283,7 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
   return;    
 });
 
-function createBookingDay(request) {
+function createBookingDay(request, response) {
   var BookingDay = Parse.Object.extend("BookingDay");
   var bookingDay = new BookingDay();
   bookingDay.set("bookingDate", request.bookingDate);
@@ -289,7 +294,9 @@ function createBookingDay(request) {
   bookingDay.set("bookingSessionDuration", request.bookingSessionDuration);
   bookingDay.save().then(function(bookingDay) {
     console.log('----------------------booking date:', bookingDay.get("bookingDate"));      
-      return;
-    });
+            response(null, 'Success');
+    }, function(error) {
+            response(error, 'Error');
+  });
 }
 
