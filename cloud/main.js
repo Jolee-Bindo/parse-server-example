@@ -264,12 +264,22 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
     
     if (offDaysArray.includes(weekDay) == false) {
       console.log('not includes');
-            
+     
       var bookingStartHour = request.object.get("bookingStartHour");
+              console.log('bookingStartHour: ', bookingStartHour);
+
       var bookingFinishHour = request.object.get("bookingFinishHour");
+              console.log('bookingFinishHour: ', bookingFinishHour);
+
       var bookingStartOffHour = request.object.get("bookingStartOffHour");
+              console.log('bookingStartOffHour: ', bookingStartOffHour);
+
       var bookingFinishOffHour = request.object.get("bookingFinishOffHour");
+              console.log('bookingFinishOffHour: ', bookingFinishOffHour);
+
       var bookingSessionDuration = request.object.get("bookingSessionDuration");
+              console.log('bookingSessionDuration: ', bookingSessionDuration);
+
       
       var request = {bookingDate:bookingDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
       createBookingDay(request);        
@@ -283,12 +293,12 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
 function createBookingDay(request) {
   var BookingDay = Parse.Object.extend("BookingDay");
   var bookingDay = new BookingDay();
-  bookingDay.set("bookingDate", );
-  bookingDay.set("bookingStartHour", );
-  bookingDay.set("bookingFinishHour", );
-  bookingDay.set("bookingStartOffHour", );
-  bookingDay.set("bookingFinishOffHour", );
-  bookingDay.set("bookingSessionDuration", );
+  bookingDay.set("bookingDate", request.get("bookingDate"));
+  bookingDay.set("bookingStartHour", request.get("bookingStartHour"));
+  bookingDay.set("bookingFinishHour", request.get("bookingFinishHour"));
+  bookingDay.set("bookingStartOffHour", request.get("bookingStartOffHour"));
+  bookingDay.set("bookingFinishOffHour", request.get("bookingFinishOffHour"));
+  bookingDay.set("bookingSessionDuration", request.get("bookingSessionDuration"));
   bookingDay.save().then(function(bookingDay) {
     console.log('----------------bookingDay:', bookingDay);
       return;
