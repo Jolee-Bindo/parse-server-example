@@ -254,11 +254,11 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
   
   var bookingDate = scheduleStartDateAtMidn;
   var offDaysArray = request.object.get("bookingOffDays").split(",");
-  console.log('Off days array length: ', offDaysArray.length);
+  console.log('Off days array: ', offDaysArray);
    
   while (bookingDate.getTime() <= scheduleFinishDateAtMidn.getTime()) {    
     var options = {weekday: "long"};  
-    var weekDay = bookingDate.toLocaleTimeString("en-us", options);
+    var weekDay = bookingDate.toLocaleDateString("en-us", options);
     console.log('Week Day: ', weekDay);
     
     if (offDaysArray.includes(weekDay) == false) {
