@@ -354,7 +354,7 @@ function createBookingTicket(request, response) {
     bookingTicket.set("bookingTicketCancellationDeadlineDate", request.bookingTicketCancellationDeadlineDate);
     bookingTicket.set("bookingTicketClientStatus", "bookingTicketClientStatusUndefined");
     return bookingTicket.save()
-  }).then(function(bookingTicket)) {
+  }).then(function(bookingTicket) {
     response(null, 'Success');
   }, function(error) {
     response(error, 'Error');
