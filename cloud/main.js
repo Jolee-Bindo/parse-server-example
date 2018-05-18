@@ -325,7 +325,7 @@ Parse.Cloud.afterSave("BookingDay", function(request) {
     while (sessionTime.getTime() <= finishWorkingHour.getTime()) {
       nextSessionTime.setSeconds(nextSessionTime.getSeconds() + sessionDuration);
       if (sessionTime.getTime() < startOffHour || sessionTime.getTime() >= finishOffHour) {
-        var request = {bookingDayId:request.object.id, businessId:business.objectId, bookingTicketDate:bookingTicketDate, bookingTicketStartTime:sessionTime, bookingTicketFinishTime:nextSessionTime, bookingTicketCancellationDeadlineDate:cancellationDeadlineDate};
+        var request = {bookingDayId:request.object.objectId, businessId:business.objectId, bookingTicketDate:bookingTicketDate, bookingTicketStartTime:sessionTime, bookingTicketFinishTime:nextSessionTime, bookingTicketCancellationDeadlineDate:cancellationDeadlineDate};
         for (var index = 0; index < numberOfServicesPerSession; index++) {
           createBookingTicket(request);
           console.log('create booking ticket: ', sessionTime);
