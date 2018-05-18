@@ -243,7 +243,7 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
 }
 
 Parse.Cloud.afterSave("BookingEvent", function(request) {
-        console.log('object......................',request.object);
+        console.log('object......................',request.object.id);
   var bookingStartHour = request.object.get("bookingStartHour");
   var bookingFinishHour = request.object.get("bookingFinishHour");
   var bookingStartOffHour = request.object.get("bookingStartOffHour");
@@ -268,7 +268,7 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
     
     if (offDaysArray.includes(weekDay) == false) {
       var bookingDayDate = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());      
-      var request = {bookingEventId:request.object.objectId, bookingDate:bookingDayDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
+      var request = {bookingEventId:request.object.id, bookingDate:bookingDayDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
       createBookingDay(request, 
         function (errorMessage, result) {
           if (errorMessage) {
