@@ -273,7 +273,7 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
       createBookingDay(request, 
       function (errorMessage, result) {
         if (errorMessage)
-                
+                console.log('Error');
 
       });
     }
