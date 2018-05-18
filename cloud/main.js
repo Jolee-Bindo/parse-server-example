@@ -29,6 +29,30 @@ Parse.Cloud.define('sendPushNotification', function(request, response) {
 });
 */
 
+Parse.Cloud.define('createBookingEvent', function(request, response) {
+  console.log('request: ', request);
+  var BookingEvent = Parse.Object.extend("BookingEvent");
+  var bookingEvent = new BookingEvent();
+  bookingEvent.set("bookingStartDate", request.params.bookingStartDate);
+  bookingEvent.set("bookingFinishDate", request.params.bookingFinishDate);
+  bookingEvent.set("bookingOffDays", request.params.bookingOffDays);
+  bookingEvent.set("bookingStartHour", request.params.bookingStartHour);
+  bookingEvent.set("bookingFinishHour", request.params.bookingFinishHour);
+  bookingEvent.set("bookingStartOffHour", request.params.bookingStartOffHour);
+  bookingEvent.set("bookingFinishOffHour", request.params.bookingFinishOffHour);
+  bookingEvent.set("bookingSessionDuration", request.params.bookingSessionDuration);
+  bookingEvent.set("bookingNumberOfServicesPerSession", request.params.bookingNumberOfServicesPerSession);
+  bookingEvent.set("bookingCancellationPeriod", request.params.bookingCancellationPeriod);
+  bookingEvent.set("bookingCancellationPolicy", request.params.bookingCancellationPolicy);
+  bookingEvent.set("bookingEventStatus", request.params.bookingEventStatus);
+  bookingEvent.set("business", request.params.business);
+  
+  bookingEvent.save().then(function(bookingEvent) {
+    console.log('----------------bookingEvent:', bookingEvent);
+    return;
+  });
+});
+
 Parse.Cloud.define('cancelReservation', function(request, response) {
   var cancellationStatus = request.params.cancellationStatus;
   
@@ -130,6 +154,7 @@ Parse.Cloud.define('reactivateSchedule', function(request, response) {
   });
 });
 
+
 Parse.Cloud.afterSave("CancelledBooking", function(request) {
   var bookingTicket;
   const ticketQuery = new Parse.Query("BookingTicket");
@@ -212,3 +237,58 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
     }
   });
 }
+
+Parse.Cloud.afterSave("BookingEvent", function(request) {
+  // Get the schedule start and finish dates at midnight.  
+  var scheduleStartDate = request.get("bookingStartDate");
+  var scheduleStartDateAtMidn = new Date(scheduleStartDate.getFullYear(), scheduleStartDate.getMonth(), scheduleStartDate.getDate());  
+  console.log('start date: ', scheduleStartDateAtMidn);
+  
+  var scheduleFinishDate = request.get("bookingFinishDate");
+  var scheduleFinishDateAtMidn = new Date(scheduleFinishDate.getFullYear(), scheduleFinishDate.getMonth(), scheduleFinishDate.getDate());  
+  console.log('finish date: ', scheduleFinishDateAtMidn);
+  
+  var bookingDate = scheduleStartDateAtMidn;
+  while ([bookingDate.getTime() <= scheduleFinishDateAtMidn.getTime()) {    
+    [dateFormatter setDateFormat:@"EEEE"];
+    NSString *weekDay = [dateFormatter stringFromDate:eventDate];
+    
+    var options = {weekday: "long"};  
+    var weekDay = bookingDate.toLocaleTimeString("en-us", options);
+    console.log('Week Day: ', weekDay);
+    
+    var offDaysArray = request.get("bookingOffDays").split(",");
+    console.log('Off days array length: ', offDaysArray.length);
+    
+    if (offDaysArray.includes(weekDay) == false) {
+      console.log('not includes');
+      var bookingStartHour = request.get("bookingStartHour");
+      var bookingFinishHour = request.get("bookingFinishHour");
+      var bookingStartOffHour = request.get("bookingStartOffHour");
+      var bookingFinishOffHour = request.get("bookingFinishOffHour");
+      var bookingSessionDuration = request.get("bookingSessionDuration");
+      
+      var request = {bookingDate:bookingDate, bookingStartHour:bookingStartHour, bookingFinishHour:bookingFinishHour, bookingStartOffHour:bookingStartOffHour, bookingFinishOffHour:bookingFinishOffHour, bookingSessionDuration:bookingSessionDuration};
+      createBookingDay(request);        
+    }
+    bookingDate.setDate(bookingDate.getDate() + 1);
+  }
+  
+  return;    
+});
+
+function createBookingDay(request) {
+  var BookingDay = Parse.Object.extend("BookingDay");
+  var bookingDay = new BookingDay();
+  bookingDay.set("bookingDate", );
+  bookingDay.set("bookingStartHour", );
+  bookingDay.set("bookingFinishHour", );
+  bookingDay.set("bookingStartOffHour", );
+  bookingDay.set("bookingFinishOffHour", );
+  bookingDay.set("bookingSessionDuration", );
+  bookingDay.save().then(function(bookingDay) {
+    console.log('----------------bookingDay:', bookingDay);
+      return;
+    });
+}
+
