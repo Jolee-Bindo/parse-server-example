@@ -243,6 +243,7 @@ function sendPushNotification(userId, businessName, bookingDate, bookingStartTim
 }
 
 Parse.Cloud.afterSave("BookingEvent", function(request) {
+        console.log('object......................',request.object);
   var bookingStartHour = request.object.get("bookingStartHour");
   var bookingFinishHour = request.object.get("bookingFinishHour");
   var bookingStartOffHour = request.object.get("bookingStartOffHour");
