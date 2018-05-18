@@ -248,10 +248,7 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
   console.log('finish date: ', scheduleFinishDateAtMidn);
   
   var bookingDate = scheduleStartDateAtMidn;
-  while ([bookingDate.getTime() <= scheduleFinishDateAtMidn.getTime()) {    
-    [dateFormatter setDateFormat:@"EEEE"];
-    NSString *weekDay = [dateFormatter stringFromDate:eventDate];
-    
+  while (bookingDate.getTime() <= scheduleFinishDateAtMidn.getTime()) {    
     var options = {weekday: "long"};  
     var weekDay = bookingDate.toLocaleTimeString("en-us", options);
     console.log('Week Day: ', weekDay);
