@@ -283,7 +283,6 @@ Parse.Cloud.afterSave("BookingEvent", function(request) {
 });
 
 function createBookingDay(request, response) {
-        console.log('request', request);
   const query = new Parse.Query("BookingEvent");
   query.get(request.bookingEventId).then(function(bookingEvent) {
     var BookingDay = Parse.Object.extend("BookingDay");
@@ -306,7 +305,6 @@ function createBookingDay(request, response) {
 }
 
 Parse.Cloud.afterSave("BookingDay", function(request) {
-        console.log('booking day after save:@@@@@@@@@@@@@@@@@@@@@',request.object);
   var bookingTicketDate = request.object.get("bookingDate");
   var startSessionTime = request.object.get("bookingStartHour");
   var finishWorkingHour = request.object.get("bookingFinishHour");
@@ -346,11 +344,13 @@ Parse.Cloud.afterSave("BookingDay", function(request) {
 });
       
 function createBookingTicket(request, response) {
+        console.log('request.........', request);
   const query = new Parse.Query("BookingDay");
   return query.get(request.bookingDayId).then(function(bookingDay) {
     const query = new Parse.Query("Business");
     return query.get(request.businessId);
   }).then(function(business) {
+          console.log('Business:', business);
     var BookingTicket = Parse.Object.extend("BookingTicket");
     var bookingTicket = new BookingTicket();
     bookingTicket.set("business", business);
