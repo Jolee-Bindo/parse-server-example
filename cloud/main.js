@@ -317,7 +317,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
       var bookingEventStatus = "bookingEventStatusDeactivated";
       for (var index = 0; index < bookingTickets.length; index++) {
         var bookingTicket = bookingTickets[index];
-//        var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
+        //        var bookingTicketStatus = bookingTicket.get("bookingTicketStatus");
         var request = {bookingTicket:bookingTicket, cancellationStatus:cancellationStatus, bookingEventStatus:bookingEventStatus};
         cancelBookingTicket(request, function (error, result) {
           if (error) {
@@ -325,6 +325,7 @@ Parse.Cloud.define('deactivateSchedule', function(request, response) {
           } else {
             console.log('Reservation Successfully Cancelled with id:', bookingTicket.id);
           }
+        });
       }
     }
     console.log("Schedule Successfully Deactivated");
