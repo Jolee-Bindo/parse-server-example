@@ -297,6 +297,8 @@ function createBookingDay(request, response) {
     bookingDay.set("bookingEvent", bookingEvent);
     return bookingDay.save()
   }).then(function(bookingDay) {
+              console.log('----------------bookingDay:', bookingDay);
+
     response(null, 'Success');
   }, function(error) {
     response(error, 'Error');
@@ -311,7 +313,7 @@ Parse.Cloud.afterSave("BookingDay", function(request) {
   var startOffHour = request.object.get("bookingStartOffHour");
   var finishOffHour = request.object.get("bookingFinishOffHour");
   var sessionDuration = request.object.get("bookingSessionDuration");
-  var numberOfServicesPerSession = request.object.get("bookingNumberOfServicesPerSession");
+  var numberOfServicesPerSession = 2;//request.object.get("bookingNumberOfServicesPerSession");
   const query = new Parse.Query("BookingEvent");
   query.include("business");
   query.get(request.bookingEventId).then(function(bookingEvent) {
