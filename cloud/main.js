@@ -313,19 +313,22 @@ Parse.Cloud.afterSave("BookingDay", function(request) {
   const query = new Parse.Query("BookingEvent");
   query.include("business");
   query.get(request.object.get("bookingEvent").id).then(function(bookingEvent) {
-          console.log('Booking Event in Booking Day aftersave:*********************** ', bookingEvent);
     var business = bookingEvent.get("business");
     var bookingCancellationPeriod = bookingEvent.get("bookingCancellationPeriod");
     var numberOfServicesPerSession = bookingEvent.get("bookingNumberOfServicesPerSession");
     var cancellationDeadlineDate = new Date(bookingTicketDate);
     cancellationDeadlineDate.setDate(cancellationDeadlineDate.getDate() - bookingCancellationPeriod);
-    console.log('cancellationDeadlineDate', cancellationDeadlineDate);
     var nextSessionTime = new Date(startSessionTime);
     var sessionTime = new Date(startSessionTime);
-    
+      console.log('sessionTime: ', sessionTime);
+  console.log('finishWorkingHour: ', finishWorkingHour);
+            console.log('numberOfServicesPerSession: ', numberOfServicesPerSession);
+
+
     while (sessionTime.getTime() <= finishWorkingHour.getTime()) {
       nextSessionTime.setSeconds(nextSessionTime.getSeconds() + sessionDuration);
       if (sessionTime.getTime() < startOffHour || sessionTime.getTime() >= finishOffHour) {
+              console.log('here');
         var request = {bookingDayId:request.object.id, businessId:business.objectId, bookingTicketDate:bookingTicketDate, bookingTicketStartTime:sessionTime, bookingTicketFinishTime:nextSessionTime, bookingTicketCancellationDeadlineDate:cancellationDeadlineDate};
         for (var index = 0; index < numberOfServicesPerSession; index++) {
           createBookingTicket(request);
