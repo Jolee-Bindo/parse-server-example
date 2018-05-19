@@ -296,8 +296,6 @@ function createBookingDay(request, response) {
     bookingDay.set("bookingEvent", bookingEvent);
     return bookingDay.save()
   }).then(function(bookingDay) {
-              console.log('----------------bookingDay:', bookingDay);
-
     response(null, 'Success');
   }, function(error) {
     response(error, 'Error');
@@ -315,9 +313,10 @@ Parse.Cloud.afterSave("BookingDay", function(request) {
   const query = new Parse.Query("BookingEvent");
   query.include("business");
   query.get(request.object.get("bookingEvent").id).then(function(bookingEvent) {
+          console.log('Booking Event in Booking Day aftersave:*********************** ', bookingEvent);
     var business = bookingEvent.get("business");
     var bookingCancellationPeriod = bookingEvent.get("bookingCancellationPeriod");
-    var numberOfServicesPerSession = request.object.get("bookingNumberOfServicesPerSession");
+    var numberOfServicesPerSession = bookingEvent.get("bookingNumberOfServicesPerSession");
     var cancellationDeadlineDate = new Date(bookingTicketDate);
     cancellationDeadlineDate.setDate(cancellationDeadlineDate.getDate() - bookingCancellationPeriod);
     console.log('cancellationDeadlineDate', cancellationDeadlineDate);
