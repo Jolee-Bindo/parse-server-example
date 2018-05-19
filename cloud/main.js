@@ -312,9 +312,10 @@ Parse.Cloud.afterSave("BookingDay", function(request) {
   var sessionDuration = request.object.get("bookingSessionDuration");
 
   const query = new Parse.Query("BookingEvent");
-  query.include("business");
+ // query.include("business");
   query.get(request.object.get("bookingEvent").id).then(function(bookingEvent) {
-    var business = bookingEvent.get("business");
+    var businessId = bookingEvent.get("business").id;
+          console.log('business id:', businessId);
     var bookingCancellationPeriod = bookingEvent.get("bookingCancellationPeriod");
     var numberOfServicesPerSession = bookingEvent.get("bookingNumberOfServicesPerSession");
     var cancellationDeadlineDate = new Date(bookingTicketDate);
@@ -329,12 +330,19 @@ Parse.Cloud.afterSave("BookingDay", function(request) {
     while (sessionTime.getTime() <= finishWorkingHour.getTime()) {
       nextSessionTime.setSeconds(nextSessionTime.getSeconds() + sessionDuration);
       if (sessionTime.getTime() < startOffHour || sessionTime.getTime() >= finishOffHour) {
-        var request = {bookingDayId:bookingDaytId, businessId:business.objectId, bookingTicketDate:bookingTicketDate, bookingTicketStartTime:sessionTime, bookingTicketFinishTime:nextSessionTime, bookingTicketCancellationDeadlineDate:cancellationDeadlineDate};
+        var request = {bookingDayId:bookingDaytId, businessId:businessId, bookingTicketDate:bookingTicketDate, bookingTicketStartTime:sessionTime, bookingTicketFinishTime:nextSessionTime, bookingTicketCancellationDeadlineDate:cancellationDeadlineDate};
         for (var index = 0; index < numberOfServicesPerSession; index++) {
                               console.log('here');
+          createBookingTicket(request, 
 
-          createBookingTicket(request);
-          console.log('create booking ticket: ', sessionTime);
+                 function (errorMessage, result) {
+          if (errorMessage) {
+            console.log('Error in creating booking ticket;', errorMessage);
+          } else {
+                            console.log('create booking ticket: ');
+
+          }
+        });
         }
       } 
       
