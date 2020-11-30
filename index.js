@@ -5,7 +5,7 @@ var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
 
-var databaseUri = process.env.DATABASE_URI || process.env.DATABASE_URL;
+var databaseUri = process.env.DATABASE_URL || process.env.DATABASE_URL;
 
 if (!databaseUri) {
   console.log('DATABASE_URI not specified, falling back to localhost.');
